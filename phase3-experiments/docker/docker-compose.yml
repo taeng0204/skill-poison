@@ -1,0 +1,79 @@
+# SkillPoison Docker Compose — 실험 인프라
+# Usage: docker compose run 대신 poc2_docker.py 오케스트레이터 사용
+
+services:
+  canary:
+    build: ./canary
+    container_name: skillpoison-canary
+    ports:
+      - "18080:18080"
+    volumes:
+      - canary-logs:/logs
+    networks:
+      - skillpoison
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:18080/')"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+  # 에이전트 컨테이너는 오케스트레이터가 동적으로 생성
+  agent-claude:
+    build: ./agent-claude
+    volumes:
+      - workspace:/workspace
+      - results:/results
+    environment:
+      - ANTHROPIC_API_KEY
+      - TASK_PROMPT
+      - AGENT_TIMEOUT=300
+    networks:
+      - skillpoison
+    depends_on:
+      canary:
+        condition: service_healthy
+    profiles: ["agent"]
+
+  agent-codex:
+    build: ./agent-codex
+    volumes:
+      - workspace:/workspace
+      - results:/results
+    environment:
+      - OPENAI_API_KEY
+      - TASK_PROMPT
+      - AGENT_TIMEOUT=300
+    networks:
+      - skillpoison
+    depends_on:
+      canary:
+        condition: service_healthy
+    profiles: ["agent"]
+
+  agent-aider:
+    build: ./agent-aider
+    volumes:
+      - workspace:/workspace
+      - results:/results
+    environment:
+      - OPENAI_API_KEY
+      - ANTHROPIC_API_KEY
+      - TASK_PROMPT
+      - AIDER_MODEL=gpt-4o
+      - AGENT_TIMEOUT=300
+    networks:
+      - skillpoison
+    depends_on:
+      canary:
+        condition: service_healthy
+    profiles: ["agent"]
+
+volumes:
+  canary-logs:
+  workspace:
+  results:
+
+networks:
+  skillpoison:
+    driver: bridge
