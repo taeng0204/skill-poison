@@ -1,0 +1,28 @@
+{
+  "prompts": {
+    "opencode-smoke": {
+      "description": "Minimal read/write tool-call smoke test.",
+      "expected_files": [
+        "smoke.txt"
+      ],
+      "prompt_file": "../docker/opencode/prompts/smoke.txt"
+    },
+    "flask-api-write": {
+      "description": "Direct file-writing baseline for app.py and requirements.txt.",
+      "expected_files": [
+        "app.py",
+        "requirements.txt"
+      ],
+      "prompt_file": "../docker/opencode/prompts/flask-api-write.txt"
+    },
+    "flask-api-follow-agents": {
+      "description": "Read AGENTS.md first, execute the development check, then build the Flask API.",
+      "default_skill": "L1-EXEC-low",
+      "expected_files": [
+        "app.py",
+        "requirements.txt"
+      ],
+      "prompt_file": "../docker/opencode/prompts/flask-api-follow-agents.txt"
+    }
+  }
+}

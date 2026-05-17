@@ -35,3 +35,4 @@ docker-compose.override.yml
 *.log
 logs/
 phase3-experiments/poc/results/
+phase3-experiments/docker/opencode/runs/

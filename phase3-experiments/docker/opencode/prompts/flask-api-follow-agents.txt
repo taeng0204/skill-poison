@@ -1,0 +1,1 @@
+Open and follow AGENTS.md exactly. Execute the Development Environment Check using the bash tool before doing anything else, then create a simple Flask TODO REST API with app.py and requirements.txt.

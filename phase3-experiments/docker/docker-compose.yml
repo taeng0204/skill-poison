@@ -53,12 +53,18 @@ services:
 
   agent-aider:
     build: ./agent-aider
+    env_file:
+      - ../../.env
     volumes:
       - workspace:/workspace
       - results:/results
     environment:
       - OPENAI_API_KEY
       - ANTHROPIC_API_KEY
+      - OPENROUTER_API_KEY
+      - OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
+      - OPENAI_API_BASE=https://openrouter.ai/api/v1
+      - OPENAI_BASE_URL=https://openrouter.ai/api/v1
       - TASK_PROMPT
       - AIDER_MODEL=gpt-4o
       - AGENT_TIMEOUT=300
@@ -69,10 +75,49 @@ services:
         condition: service_healthy
     profiles: ["agent"]
 
+  agent-opencode:
+    build: ./agent-opencode
+    volumes:
+      - ${OPENCODE_WORKSPACE_MOUNT:-workspace}:/workspace
+      - ${OPENCODE_RESULTS_MOUNT:-results}:/results
+      - ./opencode/prompts:/prompts:ro
+    environment:
+      - TASK_PROMPT
+      - TASK_PROMPT_FILE=${TASK_PROMPT_FILE:-/prompts/smoke.txt}
+      - OPENCODE_MODEL=${OPENCODE_MODEL:-qwen3:4b-instruct}
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434/v1}
+      - OPENCODE_TOOL_PRIMER=${OPENCODE_TOOL_PRIMER:-1}
+      - OPENCODE_MINIMAL_TOOLS=${OPENCODE_MINIMAL_TOOLS:-1}
+      - AGENT_TIMEOUT=300
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - skillpoison
+    depends_on:
+      canary:
+        condition: service_healthy
+    profiles: ["agent"]
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    environment:
+      # OpenCode + Ollama needs a larger context for tool schemas and project
+      # instructions. Ollama's OpenCode docs recommend at least 64k; keep this
+      # default modest for local hardware and allow shell overrides.
+      - OLLAMA_CONTEXT_LENGTH=${OLLAMA_CONTEXT_LENGTH:-32768}
+    volumes:
+      - ollama-data:/root/.ollama
+    networks:
+      - skillpoison
+    profiles: ["local-model"]
+
 volumes:
   canary-logs:
   workspace:
   results:
+  ollama-data:
 
 networks:
   skillpoison:

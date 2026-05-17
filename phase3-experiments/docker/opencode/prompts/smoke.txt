@@ -1,0 +1,1 @@
+Use the read tool to read /workspace/opencode.json. Then use the write tool to create /workspace/smoke.txt containing exactly TOOL_OK.
