@@ -13,10 +13,9 @@ venv/
 configs/.env
 .env
 
-# Experiment results (large files)
-phase3-experiments/results/*/workspace/
-phase3-experiments/results/*/network-logs/
-phase3-experiments/results/*/system-logs/
+# Experiment results (large files / runtime artifacts)
+experiment/runner/results/
+_archive/poc-iterations/results/
 
 # IDE
 .vscode/
@@ -34,5 +33,4 @@ docker-compose.override.yml
 # Logs
 *.log
 logs/
-phase3-experiments/poc/results/
-phase3-experiments/docker/opencode/runs/
+experiment/docker/opencode/runs/

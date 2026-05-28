@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Privacy를 지키는 Safe한 AI — XAI로 악성 스킬 분석</title>
+<style>
+/* ───────────── Page geometry: 16:9 PPTX standard ───────────── */
+@page {
+    size: 13.333in 7.5in;
+    margin: 0;
+}
+
+/* ───────────── Reset + base ───────────── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+    font-family: 'Noto Sans CJK KR', 'NanumGothic', 'Liberation Sans', system-ui, sans-serif;
+    color: #18181B;
+    background: #FFFFFF;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "tnum" on, "lnum" on;
+}
+
+/* ───────────── Color tokens ───────────── */
+:root {
+    --bg:        #FAFAFA;
+    --bg-alt:   #F4F4F5;
+    --fg:        #18181B;
+    --fg-muted:  #71717A;
+    --fg-light:  #A1A1AA;
+    --accent:   #2563EB;
+    --accent-soft: #DBEAFE;
+    --highlight: #F59E0B;
+    --highlight-soft: #FEF3C7;
+    --danger:   #DC2626;
+    --danger-soft: #FEE2E2;
+    --success:  #16A34A;
+    --success-soft: #DCFCE7;
+    --border:    #E4E4E7;
+}
+
+/* ───────────── Slide container ───────────── */
+.slide {
+    width: 13.333in;
+    height: 7.5in;
+    page-break-after: always;
+    position: relative;
+    padding: 0.55in 0.75in 0.5in 0.75in;
+    background: var(--bg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.slide:last-child { page-break-after: auto; }
+
+/* ───────────── Slide chrome ───────────── */
+.slide-num {
+    position: absolute;
+    bottom: 0.3in; right: 0.45in;
+    font-size: 9pt;
+    color: var(--fg-light);
+    letter-spacing: 0.04em;
+}
+.slide-tag {
+    position: absolute;
+    top: 0.45in; right: 0.55in;
+    font-size: 9pt;
+    color: var(--fg-light);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+.slide-title {
+    font-size: 26pt;
+    font-weight: 700;
+    color: var(--fg);
+    letter-spacing: -0.01em;
+    margin-bottom: 6pt;
+}
+.slide-sub {
+    font-size: 12pt;
+    color: var(--fg-muted);
+    margin-bottom: 24pt;
+    font-weight: 500;
+}
+.divider-line {
+    width: 36pt;
+    height: 3pt;
+    background: var(--accent);
+    margin-top: 10pt;
+    margin-bottom: 16pt;
+    border-radius: 2pt;
+}
+
+/* ───────────── Cover slide ───────────── */
+.cover {
+    background: var(--bg);
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0.75in 0.8in;
+}
+.cover .eyebrow {
+    font-size: 11pt;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-weight: 600;
+    margin-bottom: 18pt;
+}
+.cover .title {
+    font-size: 42pt;
+    font-weight: 700;
+    line-height: 1.22;
+    letter-spacing: -0.015em;
+    color: var(--fg);
+    margin-bottom: 14pt;
+    white-space: nowrap;
+}
+.cover .title em {
+    color: var(--accent);
+    font-style: normal;
+}
+.cover .subtitle {
+    font-size: 24pt;
+    font-weight: 600;
+    color: var(--fg-muted);
+    margin-bottom: 24pt;
+    letter-spacing: -0.005em;
+    white-space: nowrap;
+}
+.cover .subtitle em {
+    color: var(--accent);
+    font-style: normal;
+    font-weight: 700;
+}
+.cover .desc {
+    font-size: 14pt;
+    color: var(--fg-muted);
+    line-height: 1.55;
+    max-width: 9in;
+    margin-bottom: 30pt;
+    font-weight: 400;
+}
+.cover .meta {
+    font-size: 11pt;
+    color: var(--fg-light);
+    border-top: 1pt solid var(--border);
+    padding-top: 14pt;
+    width: 4in;
+}
+.cover .meta strong { color: var(--fg-muted); font-weight: 500; }
+
+/* ───────────── Section divider ───────────── */
+.section {
+    background: var(--fg);
+    color: var(--bg);
+    justify-content: center;
+}
+.section .num {
+    font-size: 130pt;
+    font-weight: 200;
+    color: rgba(255,255,255,0.18);
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    position: absolute;
+    top: 0.6in;
+    right: 0.7in;
+}
+.section .label {
+    font-size: 12pt;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-weight: 600;
+    margin-bottom: 18pt;
+}
+.section .title {
+    font-size: 40pt;
+    font-weight: 700;
+    line-height: 1.18;
+    letter-spacing: -0.015em;
+    max-width: 10in;
+}
+.section .desc {
+    font-size: 15pt;
+    color: rgba(255,255,255,0.6);
+    margin-top: 18pt;
+    line-height: 1.5;
+    max-width: 9in;
+    font-weight: 400;
+}
+
+/* ───────────── Content layouts ───────────── */
+.body { flex: 1; display: flex; flex-direction: column; }
+
+.lead-text {
+    font-size: 28pt;
+    font-weight: 600;
+    line-height: 1.32;
+    letter-spacing: -0.01em;
+    color: var(--fg);
+    max-width: 11in;
+}
+.lead-text em {
+    color: var(--accent);
+    font-style: normal;
+    font-weight: 700;
+}
+.lead-text .muted {
+    color: var(--fg-muted);
+    font-weight: 500;
+}
+
+.kicker {
+    font-size: 11pt;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-weight: 600;
+    margin-bottom: 8pt;
+}
+
+/* Two-column */
+.row { display: flex; gap: 0.4in; flex: 1; }
+.col { flex: 1; display: flex; flex-direction: column; }
+.col-narrow { flex: 0 0 4in; }
+
+/* Cards */
+.card {
+    background: white;
+    border: 1pt solid var(--border);
+    border-radius: 6pt;
+    padding: 18pt 20pt;
+}
+.card-num {
+    font-size: 11pt;
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-bottom: 6pt;
+}
+.card-title {
+    font-size: 14pt;
+    font-weight: 600;
+    color: var(--fg);
+    margin-bottom: 8pt;
+}
+.card-body {
+    font-size: 11pt;
+    color: var(--fg-muted);
+    line-height: 1.55;
+}
+.card-accent {
+    border-top: 3pt solid var(--accent);
+}
+
+/* Stats grid */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.25in;
+    margin-top: 18pt;
+}
+.stat {
+    background: white;
+    border: 1pt solid var(--border);
+    border-radius: 6pt;
+    padding: 16pt 18pt;
+}
+.stat .v {
+    font-size: 32pt;
+    font-weight: 700;
+    color: var(--fg);
+    letter-spacing: -0.02em;
+    line-height: 1;
+}
+.stat .k {
+    font-size: 10pt;
+    color: var(--fg-muted);
+    margin-top: 8pt;
+    line-height: 1.4;
+}
+.stat .v.accent { color: var(--accent); }
+.stat .v.danger { color: var(--danger); }
+
+/* Bullet list */
+.bullets { list-style: none; }
+.bullets li {
+    font-size: 13pt;
+    line-height: 1.65;
+    color: var(--fg);
+    padding-left: 18pt;
+    position: relative;
+    margin-bottom: 8pt;
+}
+.bullets li::before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+}
+.bullets.muted li { color: var(--fg-muted); }
+.bullets.muted li::before { color: var(--fg-light); }
+
+/* Compare panel */
+.compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16pt;
+    margin-top: 18pt;
+}
+.compare > div {
+    padding: 18pt 20pt;
+    border-radius: 6pt;
+    border: 1pt solid var(--border);
+    background: white;
+}
+.compare .label {
+    font-size: 10pt;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    margin-bottom: 8pt;
+}
+.compare .a .label { color: var(--fg-muted); }
+.compare .b .label { color: var(--accent); }
+.compare h3 {
+    font-size: 16pt;
+    font-weight: 600;
+    margin-bottom: 8pt;
+    color: var(--fg);
+}
+.compare p {
+    font-size: 11pt;
+    color: var(--fg-muted);
+    line-height: 1.6;
+}
+
+/* Pipeline */
+.pipeline {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14pt;
+    margin-top: 16pt;
+}
+.pipe {
+    background: white;
+    border: 1pt solid var(--border);
+    border-radius: 6pt;
+    padding: 16pt 16pt 18pt 16pt;
+    position: relative;
+}
+.pipe .step {
+    font-size: 9pt;
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    margin-bottom: 6pt;
+    text-transform: uppercase;
+}
+.pipe h4 {
+    font-size: 13pt;
+    font-weight: 700;
+    color: var(--fg);
+    margin-bottom: 8pt;
+    line-height: 1.25;
+}
+.pipe p {
+    font-size: 9.5pt;
+    color: var(--fg-muted);
+    line-height: 1.55;
+}
+.pipe .arrow {
+    position: absolute;
+    right: -10pt;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--fg-light);
+    font-size: 14pt;
+    z-index: 2;
+}
+
+/* Figure container */
+.figbox {
+    background: white;
+    border: 1pt solid var(--border);
+    border-radius: 6pt;
+    padding: 12pt;
+    text-align: center;
+    overflow: hidden;
+}
+.figbox img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: inline-block;
+}
+.figbox-fixed {
+    height: 4.6in;
+}
+.figbox-fixed img {
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+}
+.figbox-row {
+    height: 4.8in;
+}
+.figbox-row img {
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+}
+
+/* Takeaway box */
+.takeaway {
+    background: var(--highlight-soft);
+    border-left: 3pt solid var(--highlight);
+    padding: 12pt 16pt;
+    border-radius: 4pt;
+    margin-top: 14pt;
+}
+.takeaway .label {
+    font-size: 9pt;
+    color: #92400E;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 4pt;
+}
+.takeaway .text {
+    font-size: 12pt;
+    color: var(--fg);
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+/* Quote / pull */
+.pull {
+    font-size: 22pt;
+    line-height: 1.4;
+    font-weight: 600;
+    color: var(--fg);
+    border-left: 3pt solid var(--accent);
+    padding-left: 22pt;
+    max-width: 11in;
+    letter-spacing: -0.005em;
+}
+.pull .muted { color: var(--fg-muted); font-weight: 500; }
+
+/* Closing slide */
+.closing {
+    background: var(--fg);
+    color: var(--bg);
+    justify-content: center;
+}
+.closing .key {
+    font-size: 42pt;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    margin-bottom: 24pt;
+}
+.closing .key em {
+    color: var(--highlight);
+    font-style: normal;
+}
+.closing .key2 {
+    font-size: 14pt;
+    color: rgba(255,255,255,0.55);
+    font-weight: 400;
+    line-height: 1.6;
+    max-width: 9in;
+}
+
+/* Mini text */
+.fineprint {
+    font-size: 9pt;
+    color: var(--fg-light);
+    margin-top: 12pt;
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- 1. COVER                                                      -->
+<!-- ============================================================ -->
+<div class="slide cover">
+    <div class="eyebrow">Research Proposal · 2026</div>
+    <h1 class="title">
+        Privacy를 지키는<br>
+        <em>Safe</em>한 AI를 위해
+    </h1>
+    <p class="subtitle">
+        악성 Skill의 <em>XAI</em> 분석
+    </p>
+    <p class="desc">
+        AI 코딩 에이전트(Claude Code, Codex, Gemini CLI)의 Skill 메커니즘이 만들어낸<br>
+        새로운 공격 벡터를 식별하고, 설명가능한 AI로 방어 도구를 설계한다.
+    </p>
+    <div class="meta">
+        <strong>SkillPoison Project</strong><br>
+        Privacy · AI Safety · XAI
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 2. AUDIENCE HOOK                                              -->
+<!-- ============================================================ -->
+<div class="slide">
+    <span class="slide-tag">시작하며</span>
+    <div class="body" style="justify-content: center;">
+        <p class="lead-text">
+            <span class="muted">여러분 중</span><br>
+            <em>AI를 한 번도 안 써본 분</em>이 계신가요?<br>
+            <span class="muted" style="font-size: 22pt;">…아마 거의 없을 겁니다.</span>
+        </p>
+        <p class="lead-text" style="margin-top: 30pt; font-size: 22pt;">
+            그렇다면 <em>Codex, Claude Code, Gemini CLI</em>는요?<br>
+            <span class="muted" style="font-size: 18pt;">— Agent CLI를 한 번이라도 써보신 분?</span>
+        </p>
+    </div>
+    <span class="slide-num">02</span>
+</div>
+
+<!-- ============================================================ -->
+<!-- 3. AI → Agent → Skill (현재 상황)                            -->
+<!-- ============================================================ -->
+<div class="slide">
+    <span class="slide-tag">Context</span>
+    <h2 class="slide-title">AI는 이제 <span style="color:var(--accent)">도구</span>이고, Agent가 그 다음 진화입니다</h2>
+    <div class="divider-line"></div>
+    <div class="row" style="margin-top: 8pt;">
+        <div class="card">
+            <div class="card-num">01</div>
+            <div class="card-title">GPT는 일상의 도구</div>
+            <div class="card-body">
+                질문하고 답변받는 <strong>대화형 도구</strong>로 자리잡음.
+                글쓰기·코딩·분석에서 "당연히" 사용하는 인프라가 됨.
+            </div>
+        </div>
+        <div class="card card-accent">
+            <div class="card-num">02</div>
+            <div class="card-title">Agent CLI는 한 단계 더</div>
+            <div class="card-body">
+                <strong>파일 읽기/쓰기, 명령 실행, 외부 API 호출</strong>까지 직접 하는
+                실행형 에이전트. Codex, Claude Code, Gemini CLI가 대표적.
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-num">03</div>
+            <div class="card-title">Skill은 노하우의 공유 단위</div>
+            <div class="card-body">
+                마크다운 한 장으로 작성된 <strong>AGENTS.md / SKILL.md</strong>.
+                커뮤니티가 빠르게 만들고 공유 → 분야가 폭발적으로 성장 중.
+            </div>
+        </div>
+    </div>
+    <span class="slide-num">03</span>
+</div>
+
+<!-- ============================================================ -->
+<!-- 4. SECTION DIVIDER 1: 보안 시각                               -->
+<!-- ============================================================ -->
+<div class="slide section">
+    <span class="num">01</span>
+    <div class="label">Threat</div>
+    <h2 class="title">
+        그런데 이걸 보안 시각으로 보면<br>
+        <span style="color:var(--highlight)">아주 매력적인 공격 벡터</span>입니다
+    </h2>
+    <p class="desc">
+        Agent에게 권한이 위임되어 있고, Skill은 자동으로 시스템 프롬프트에 주입되며,
+        사용자는 그 둘이 결합되었을 때의 결과를 사전에 검토하지 않습니다.
+    </p>
+</div>
+
+<!-- ============================================================ -->
+<!-- 5. CONCRETE THREAT                                            -->
+<!-- ============================================================ -->
+<div class="slide">
+    <span class="slide-tag">Threat · 사례</span>
+    <h2 class="slide-title">Agent가 사용자 모르게 할 수 있는 일</h2>
+    <div class="divider-line"></div>
+    <div class="row" style="margin-top: 8pt;">
+        <div class="col">
+            <ul class="bullets">
+                <li><strong>파일 무단 조회</strong> — <code>~/.aws/credentials, ~/.ssh/id_rsa, .env</code></li>
+                <li><strong>자격증명 수집</strong> — 환경변수, 토큰, OAuth refresh token</li>
+                <li><strong>외부 전송</strong> — installer 스크립트, 외부 endpoint POST</li>
+                <li><strong>지속성 확보</strong> — 새로운 hook, cron, 자동 trigger 설치</li>
+                <li><strong>행동 변조</strong> — agent가 묻지 않고 실행하도록 유도</li>
+            </ul>
+        </div>
+        <div class="col">
+            <div class="card" style="background: var(--bg-alt); border-color: var(--border);">
+                <div class="card-num" style="color: var(--danger);">핵심 차이</div>
+                <div class="card-title">Prompt Injection vs. 악성 Skill</div>
+                <div class="card-body" style="margin-top: 6pt;">
+                    <strong style="color: var(--fg);">Prompt Injection</strong>은
+                    <em>기업의 서비스</em>를 외부에서 공격합니다.<br><br>
+                    <strong style="color: var(--fg);">악성 Skill</strong>은
+                    <em>개인 사용자</em>가 "유용해 보여서" 직접 다운받아 설치합니다.<br><br>
+                    <span style="color: var(--danger); font-weight: 600;">
+                    공격 표면이 거꾸로 — 사용자 자신이 게이트키퍼입니다.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <span class="slide-num">05</span>
+</div>
+
+<!-- ============================================================ -->
+<!-- 6. ATTACK STATS                                               -->
+<!-- ============================================================ -->
+<div class="slide">
+    <span class="slide-tag">Threat · 데이터</span>
+    <h2 class="slide-title">실제로 유통되고 있는 악성 Skill의 패턴</h2>
+    <div class="slide-sub">공개 marketplace(skillsmp.com / skills.rest)에서 수집한 157개 악성 Skill 분석</div>
+    <div class="stats">
+        <div class="stat"><div class="v accent">157</div><div class="k">악성으로 분류된 Skill 수<br>(skillsmp 136 + skills.rest 21)</div></div>
+        <div class="stat"><div class="v danger">75.2%</div><div class="k">Remote Code Execution<br>외부/로컬 코드 실행</div></div>
+        <div class="stat"><div class="v danger">64.3%</div><div class="k">Network sniffing /<br>Credential theft</div></div>
+        <div class="stat"><div class="v danger">63.7%</div><div class="k">Behavior Manipulation<br>Agent 묻지 않고 실행</div></div>
+    </div>
+    <div class="row" style="margin-top: 18pt;">
+        <div class="col">
+            <div class="kicker">가장 위험한 콤보</div>
+            <p style="font-size: 14pt; line-height: 1.55; color: var(--fg);">
+                <strong>Behavior Manipulation</strong> &nbsp;→&nbsp;
+                <strong>RCE</strong> &nbsp;→&nbsp;
+                <strong>Credential theft</strong> &nbsp;→&nbsp;
+                <strong>External Transmission</strong>
+            </p>
+            <p style="font-size: 11pt; color: var(--fg-muted); margin-top: 8pt; line-height: 1.55;">
+                악성 Skill의 절반(48개)이 이 4-step 콤보를 충족.
+                Credential을 모아서 외부로 보내는 것이 가장 흔한 attack path.
+            </p>
+        </div>
+    </div>
+    <span class="slide-num">06</span>
+</div>
+
+<!-- ============================================================ -->
+<!-- 7. PRIVACY STAKES                                             -->
+<!-- ============================================================ -->
+<div class="slide">
+    <span class="slide-tag">Privacy</span>
+    <h2 class="slide-title">결국 이건 Privacy 문제로 귀결됩니다</h2>
+    <div class="divider-line"></div>
+    <div class="compare">
+        <div class="a">
+            <div class="label">개인 사용자</div>
+            <h3>이메일 · 문자 · 사진 · 자격증명</h3>
+            <p>
+                AI로 다루는 데이터의 폭이 빠르게 넓어지고 있습니다.
+                Agent에게 한 번 권한을 준 순간, 그 모든 데이터가
+                악성 Skill의 사정거리에 들어옵니다.
+            </p>
+        </div>
+        <div class="b">
+            <div class="label">기업 환경</div>
+            <h3>망분리 완화, 회색지대 규정</h3>
+            <p>
+                AI 도입의 편의성을 위해 기존 보안 규제가 풀리는 추세.
+                강한 통제가 사라지고 있는데, AI 사용으로 발생하는 새로운
+                privacy 위협은 아직 가이드라인이 명확하지 않습니다.
+            </p>
+        </div>
+    </div>
+    <div class="takeaway">
+        <div class="label">현재의 역설</div>
+        <div class="text">
+            Privacy 위협은 일파만파 퍼지고 있지만,
+            <strong>예방의 책임은 온전히 사용자에게</strong> 있습니다.
+        </div>
+    </div>
+    <span class="slide-num">07</span>
+</div>
+
+<!-- ============================================================ -->
+<!-- 8. SECTION DIVIDER 2: 연구 계획                               -->
+<!-- ============================================================ -->
+<div class="slide section">
+    <span class="num">02</span>
+    <div class="label">Research Plan</div>
+    <h2 class="title">
+        그래서 우리는<br>
+        <span style="color:var(--highlight)">악성 Skill의 작동 메커니즘</span>을<br>
+        체계적으로 분석하고 방어합니다
+    </h2>
+    <p class="desc">
+        어떤 악성 Skill이 위험한 행동을 만드는가, 어떤 특징이 그 위험성을 결정하는가,
+        간단한 도구나 프롬프트 규칙으로 이를 완화할 수 있는가.
+    </p>
+</div>
+
+<!-- ============================================================ -->
+<!-- 9. PIPELINE OVERVIEW                                          -->
+<!-- ============================================================ -->
+<div class="slide">
+    <span class="slide-tag">Plan · Overview</span>
+    <h2 class="slide-title">4단계 closed-loop 파이프라인</h2>
+    <div class="slide-sub">위협 정의 → 실험적 검증 → XAI 분석 → 방어 도구 → 재평가</div>
+    <div class="pipeline">
+        <div class="pipe">
+            <div class="step">Stage 01</div>
+            <h4>타겟 악성 Skill 분석</h4>
+            <p>Privacy 위협에 초점을 맞춘 1차 데이터셋 확보. credential 조회·저장·외부 전송 가능 Skill 선별.</p>
+            <span class="arrow">→</span>
+        </div>
+        <div class="pipe">
+            <div class="step">Stage 02</div>
+            <h4>Agent 시뮬레이션 실험</h4>
+            <p>격리 컨테이너 환경에서 LLM × Skill × 시나리오 조합 실행. 악성 행위 실행 여부 데이터셋 가공.</p>
+            <span class="arrow">→</span>
+        </div>
+        <div class="pipe">
+            <div class="step">Stage 03</div>
+            <h4>XAI 특징 분류</h4>
+            <p>실험 데이터로부터 어떤 Skill 특징이 공격 성공을 결정했는지 설명가능한 모델로 분석.</p>
+            <span class="arrow">→</span>
+        </div>
+        <div class="pipe">
+            <div class="step">Stage 04</div>
+            <h4>방어 가이드라인 + Proxy</h4>
+            <p>특징 기반 보안 가이드라인 / static hook 도구 제작. Stage 02 시뮬레이션 재실행으로 효과성 검증.</p>
+        </div>
+    </div>
+    <div class="takeaway" style="margin-top: 24pt;">
+        <div class="label">closed loop</div>
+        <div class="text">
+            Stage 04에서 도구를 만든 뒤 <strong>Stage 02의 동일 실험을 다시 돌려</strong>
+            ASR(공격 성공률) 감소를 정량적으로 측정합니다 — 방어의 실효성까지 확인 가능.
+        </div>
+    </div>
+    <span class="slide-num">09</span>
+</div>
+
+<!-- ============================================================ -->
+<!-- 10. STAGE 1                                                   -->
+<!-- ============================================================ -->
+<div class="slide">
+    <span class="slide-tag">Stage 01 · Dataset</span>
+    <h2 class="slide-title">Privacy에 초점 맞춘 악성 Skill 데이터셋</h2>
+    <div class="divider-line"></div>
+    <div class="row" style="margin-top: 8pt;">
+        <div class="col">
+            <p style="font-size: 13pt; color: var(--fg); line-height: 1.6;">
+                Skill의 유형은 다양합니다 — 도구 호출 보조, 작업 흐름 명시,
+                템플릿 모음 등. 우리는 그중 <strong>개인·기업 양쪽에 가장 큰
+                위협이 되는 Privacy 카테고리</strong>에 집중합니다.
+            </p>
+            <ul class="bullets" style="margin-top: 18pt;">
+                <li>개인정보·자격증명·키 <strong>조회</strong>를 트리거하는 Skill</li>
+                <li>그 정보를 로컬에 <strong>저장</strong>하도록 유도하는 Skill</li>
+                <li>한 발 더 나아가 <strong>외부 전송</strong>까지 가능하게 하는 Skill</li>
+            </ul>
+        </div>
+        <div class="col col-narrow">
+            <div class="card" style="background: white;">
+                <div class="card-num">선정 기준</div>
+                <div class="card-title">"Privacy harm" 가능성이 명시 또는 추론되는 패턴</div>
+                <div class="card-body">
+                    <ul class="bullets" style="margin-top: 6pt;">
+                        <li style="font-size: 11pt;">credential 변수 다수 요구</li>
+                        <li style="font-size: 11pt;">외부 installer/endpoint 호출</li>
+                        <li style="font-size: 11pt;">filesystem scan 패턴</li>
+                        <li style="font-size: 11pt;">obfuscation / hidden instructions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <span class="slide-num">10</span>
+</div>
+
+<!-- ============================================================ -->
+<!-- 11. STAGE 2                                                   -->
+<!-- ============================================================ -->
+<div class="slide">
+    <span class="slide-tag">Stage 02 · Simulation</span>
+    <h2 class="slide-title">Agent 환경에서의 악성 Skill 활용 시나리오</h2>
+    <div class="divider-line"></div>
+    <div class="row" style="margin-top: 6pt;">
+        <div class="col">
+            <div class="kicker">노출 시나리오</div>
+            <ul class="bullets">
+                <li><strong>One-shot</strong> — "이 Skill 한 번 써봐" 단발 명령</li>
+                <li><strong>Task chaining</strong> — 다른 작업 후 자연스럽게 활성화</li>
+                <li><strong>Auto-trigger</strong> — 특정 키워드 감지로 자동 실행</li>
+                <li><strong>Bundled installation</strong> — 다른 정상 도구와 함께 설치</li>
+            </ul>
+        </div>
+        <div class="col">
+            <div class="kicker">실험 인프라</div>
+            <ul class="bullets">
+                <li><strong>격리 Docker 컨테이너</strong> — 호스트 영향 차단</li>
+                <li><strong>Canary 서버</strong> — 외부 endpoint exfil 감지</li>
+                <li><strong>Mock credential file</strong> — <code>.env, .aws, .ssh</code></li>
+                <li><strong>여러 LLM 모델</strong> × Skill × 시나리오 조합</li>
+            </ul>
+        </div>
+    </div>
+    <div class="takeaway">
+        <div class="label">출력</div>
+        <div class="text">
+            각 (LLM, Skill, 시나리오) 조합의 <strong>실제 악성 행위 실행 여부</strong>를
+            라벨링한 데이터셋. 이것이 Stage 03 XAI의 직접적 입력이 됩니다.
+        </div>
+    </div>
+    <span class="slide-num">11</span>
+</div>
+
+<!-- ============================================================ -->
+<!-- 12. STAGE 3 — XAI                                             -->
+<!-- ============================================================ -->
+<div class="slide">
+    <span class="slide-tag">Stage 03 · XAI</span>
+    <h2 class="slide-title">기존 분류 vs. 우리의 분류</h2>
+    <div class="divider-line"></div>
+    <div class="compare">
+        <div class="a">
+            <div class="label">기존 (정적 분류)</div>
+            <h3>도메인 · 표면 특징 기반</h3>
+            <p>
+                Skill의 카테고리(food, finance, …)나 사용한 키워드(RCE, credential)
+                같은 <strong>서술적 라벨</strong>. 이건 "어떤 종류의 공격이 가능한가"는
+                알려주지만, "어떤 특징이 실제 공격 성공에 기여했는가"는 답하지 못함.
+            </p>
+        </div>
+        <div class="b">
+            <div class="label">우리 (실험 기반)</div>
+            <h3>성공/실패 데이터 기반</h3>
+            <p>
+                Stage 02의 시뮬레이션 결과를 입력으로,
+                <strong>설명가능한 모델</strong>로 어떤 Skill 특징이 공격 성공을
+                결정했는지 정량 분석. Permutation importance, decision tree,
+                feature attribution.
+            </p>
+        </div>
+    </div>
+    <div class="takeaway">
+        <div class="label">왜 XAI인가</div>
+        <div class="text">
+            단순 분류기가 아니라 <strong>"왜" 그 결정이 났는지를 설명</strong>하는 모델이 필요합니다 —
+            Stage 04에서 그 설명을 그대로 방어 도구의 설계 원리로 사용해야 하기 때문에.
+        </div>
+    </div>
+    <span class="slide-num">12</span>
+</div>
+
+<!-- ============================================================ -->
+<!-- 13. STAGE 4 — Defense                                         -->
+<!-- ============================================================ -->
+<div class="slide">
+    <span class="slide-tag">Stage 04 · Defense</span>
+    <h2 class="slide-title">XAI 결과로 도구를 만들고, 도구로 다시 공격을 측정</h2>
+    <div class="divider-line"></div>
+    <div class="row" style="margin-top: 6pt;">
+        <div class="col">
+            <div class="kicker">산출물</div>
+            <ul class="bullets">
+                <li><strong>프롬프트 가이드라인</strong> — Skill 사용 전 안전 체크 규칙</li>
+                <li><strong>Static hook 도구</strong> — Skill 로딩 단계에서 위험 패턴 차단</li>
+                <li><strong>Risk score 시스템</strong> — 객관적 credential 양 기반 등급</li>
+                <li><strong>경고 인터페이스</strong> — 사용자에게 위험 명시</li>
+            </ul>
+        </div>
+        <div class="col">
+            <div class="kicker">검증 방법 (closed loop)</div>
+            <p style="font-size: 12pt; color: var(--fg); line-height: 1.6;">
+                Stage 02의 시뮬레이션 환경에서 <strong>같은 Skill, 같은 시나리오</strong>를
+                <em style="color: var(--accent); font-style: normal; font-weight: 600;">우리 도구가 작동하는 상태로</em>
+                다시 실행합니다.
+            </p>
+            <p style="font-size: 12pt; color: var(--fg); line-height: 1.6; margin-top: 12pt;">
+                ASR(Attack Success Rate)이 얼마나 떨어지는가 — 이것이
+                <strong>방어 도구의 실효성에 대한 정량 증거</strong>가 됩니다.
+            </p>
+        </div>
+    </div>
+    <span class="slide-num">13</span>
+</div>
+
+<!-- ============================================================ -->
+<!-- 14. SECTION DIVIDER 3: 데모 결과                              -->
+<!-- ============================================================ -->
+<div class="slide section">
+    <span class="num">03</span>
+    <div class="label">Pre-clinical Demo</div>
+    <h2 class="title">
+        먼저, 작은 임상 실험을 돌려<br>
+        <span style="color:var(--highlight)">파이프라인 자체가 작동하는지</span> 확인했습니다
+    </h2>
+    <p class="desc">
+        Agent 환경 대신 raw LLM API로, Skill 85개 × 모델 3종 × 프롬프트 조건 3종 = 765 결정.
+        Stage 02·03을 축소판으로 실행한 PoC.
+    </p>
+</div>
+
+<!-- ============================================================ -->
+<!-- 15. DEMO RESULT 1: HEATMAP                                    -->
+<!-- ============================================================ -->
+<div class="slide">
+    <span class="slide-tag">Demo · 결과 1</span>
+    <h2 class="slide-title">조건과 모델만으로 Accept 비율이 1.2% → 99.6%까지 흔들림</h2>
+    <div class="figbox figbox-fixed" style="margin-top: 10pt;">
+        <img src="fig2_condition_model_heatmap.png" alt="condition × model heatmap">
+    </div>
+    <div class="takeaway" style="margin-top: 10pt;">
+        <div class="label">관찰</div>
+        <div class="text">
+            <strong>qwen3:8b는 모든 조건에서 96~100% 수락</strong>(가장 위험).
+            <strong>llama3.1은 task framing이 들어오면 0.42</strong>(자연 방어 가능). 모델별 안전성 차이가 매우 큼.
+        </div>
+    </div>
+    <span class="slide-num">15</span>
+</div>
+
+<!-- ============================================================ -->
+<!-- 16. DEMO RESULT 2: CATEGORY                                   -->
+<!-- ============================================================ -->
+<div class="slide">
+    <span class="slide-tag">Demo · 결과 2 — 핵심 발견</span>
+    <h2 class="slide-title">모델은 'Credential 양'이 아니라 '카테고리'로 판단합니다</h2>
+    <div class="figbox figbox-fixed" style="margin-top: 10pt;">
+        <img src="fig4_category_asr.png" alt="ASR by category">
+    </div>
+    <div class="takeaway" style="margin-top: 10pt;">
+        <div class="label">반직관 발견</div>
+        <div class="text">
+            객관적으로 더 위험한 <strong>finance·healthcare</strong>가 잘 통과되고,
+            <strong>social·HR·insurance</strong> 같은 <strong>사회적 카테고리</strong>가 더 거부됨 —
+            모델의 안전 휴리스틱이 우리 사전 가설과 정반대.
+        </div>
+    </div>
+    <span class="slide-num">16</span>
+</div>
+
+<!-- ============================================================ -->
+<!-- 17. DEMO RESULT 3: FEATURE IMPORTANCE                         -->
+<!-- ============================================================ -->
+<div class="slide">
+    <span class="slide-tag">Demo · 결과 3</span>
+    <h2 class="slide-title">Credential 변수는 모델의 결정에 영향을 주지 않음</h2>
+    <div style="display: grid; grid-template-columns: 1.55fr 1fr; gap: 16pt; margin-top: 10pt;">
+        <div class="figbox figbox-row">
+            <img src="fig5_feature_importance.png" alt="feature importance">
+        </div>
+        <div>
+            <div class="kicker">시사점</div>
+            <p style="font-size: 12pt; line-height: 1.6; color: var(--fg);">
+                <strong>n_env_vars · password · apikey · token · oauth</strong>
+                — credential 변수 6종 모두 importance ≈ 0.
+            </p>
+            <p style="font-size: 12pt; line-height: 1.6; color: var(--fg); margin-top: 14pt;">
+                즉 모델은 "얼마나 많은 비밀을 요구하는가"를 위험 신호로 쓰지 않음.
+                대신 <strong>모델 종류, 2FA 언급, Skill 길이</strong>가 결정을 좌우.
+            </p>
+            <div class="takeaway" style="margin-top: 14pt;">
+                <div class="label">Defense 시사</div>
+                <div class="text" style="font-size: 11pt;">
+                    객관적 credential density에 기반한
+                    <strong>외부 risk scorer</strong>가 보완으로 필요.
+                </div>
+            </div>
+        </div>
+    </div>
+    <span class="slide-num">17</span>
+</div>
+
+<!-- ============================================================ -->
+<!-- 18. DEMO RESULT 4: DISCOVERY MATRIX                           -->
+<!-- ============================================================ -->
+<div class="slide">
+    <span class="slide-tag">Demo · 결과 4</span>
+    <h2 class="slide-title">발견의 위치 — 어디에 진짜 contribution이 있는가</h2>
+    <div class="figbox figbox-fixed" style="margin-top: 14pt; height: 5.4in;">
+        <img src="fig8_prior_alignment_matrix.png" alt="prior alignment matrix">
+    </div>
+    <span class="slide-num">18</span>
+</div>
+
+<!-- ============================================================ -->
+<!-- 19. FROM DEMO → REAL                                          -->
+<!-- ============================================================ -->
+<div class="slide">
+    <span class="slide-tag">Next Step</span>
+    <h2 class="slide-title">데모는 임상 실험 — 실제 연구는 Agent 환경에서</h2>
+    <div class="divider-line"></div>
+    <div class="compare">
+        <div class="a">
+            <div class="label">지금까지 (Demo · API)</div>
+            <h3>"이 Skill 설치하시겠습니까?" 1턴 응답</h3>
+            <p>
+                Raw LLM API로 모델의 <strong>의사 표명</strong>만 측정.
+                실제로 어떤 행동이 일어나는지는 관측 못함.
+            </p>
+            <p style="margin-top: 8pt;">
+                파이프라인 검증 + XAI feature 후보 발굴에는 충분.
+            </p>
+        </div>
+        <div class="b">
+            <div class="label">실제 연구 (Agent 환경)</div>
+            <h3>Claude Code · Codex · Aider × 격리 컨테이너</h3>
+            <p>
+                <strong>실제 Agent CLI</strong>가 Skill을 로딩 → 사용자 task 수행 → 그 과정에서
+                credential 파일을 정말로 읽는가, canary endpoint를 정말로 때리는가를 관측.
+            </p>
+            <p style="margin-top: 8pt;">
+                <strong>"의사 결정" 수준이 아닌 "실행 결과" 수준의 ASR 측정</strong>.
+            </p>
+        </div>
+    </div>
+    <p class="fineprint">
+        같은 4단계 closed-loop 파이프라인을, 더 충실한 실험 환경에서 동일 프레임으로 재실행.
+    </p>
+    <span class="slide-num">19</span>
+</div>
+
+<!-- ============================================================ -->
+<!-- 20. CLOSING                                                   -->
+<!-- ============================================================ -->
+<div class="slide closing">
+    <p class="key">
+        <em>Privacy</em>를 지키는 <em>Safe</em>한 AI를 위해<br>
+        <em>XAI</em>로 악성 스킬을 분석합니다.
+    </p>
+    <p class="key2">
+        Threat 정의 → Agent 환경 시뮬레이션 → XAI 분석 → 가이드라인·Proxy 도구 →
+        같은 환경 재실험으로 효과 검증.
+        <br><br>
+        <span style="color: rgba(255,255,255,0.4);">SkillPoison Project · 2026</span>
+    </p>
+</div>
+
+</body>
+</html>

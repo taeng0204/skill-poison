@@ -1,0 +1,905 @@
+================================================================
+SkillProbe — 발표 대본 (v5 · 33 슬라이드 · 상세 narration)
+Toward Privacy-preserving, Safe AI / XAI-based Analysis of Malicious Skills
+Safety AI · Course Proposal · 2026
+발표자: 박재현(20212480) · 유재윤(20231291) · 임태인(20210362)
+================================================================
+
+총 발표 시간: 22~26분 (1슬라이드당 평균 40~70초)
+스타일: 위협 정의 → 선행연구·공백 → 4단계 연구 계획 →
+       데모 결과 → Closing. 연구 발표 톤.
+주의: 화면에 표시된 모든 요소(표·수치·캡처·박스 컬러)를 짚으며
+     설명하는 detailed narration 버전. 청중이 슬라이드를
+     보지 않아도 내용을 이해할 수 있도록 풀어냅니다.
+
+────────────────────────────────────────────────────────────
+[Slide 01 / Cover] — 표지
+────────────────────────────────────────────────────────────
+"안녕하세요. Safety AI 수업 Project Proposal로 발표를 시작합니다.
+저희 프로젝트 이름은 SkillProbe — Toward Privacy-preserving, Safe AI,
+부제로 XAI-based Analysis of Malicious Skills입니다.
+
+한 줄로 요약하면, AI 코딩 에이전트가 사용하는 'Skill' 메커니즘을
+새로운 Privacy 공격 벡터로 정의하고, 설명가능한 AI로 어떤 요인이
+공격 성공에 기여하는지 정량적으로 분석해서 방어 도구의 설계 원리로
+삼는 연구입니다.
+
+오른쪽 아래에 보시면 코드는 github.com/taeng0204/skill-poison에
+공개되어 있고, 데이터셋은 huggingface의 ProtectSkills/
+MaliciousAgentSkillsBench를 사용합니다 — 발표 후 검증 가능합니다.
+
+발표자는 박재현, 유재윤, 임태인 세 명이고, 본 발표는 약 22분 정도
+소요됩니다. 그럼 시작하겠습니다."
+(40초)
+
+────────────────────────────────────────────────────────────
+[Slide 02] Evolution of the AI Usage Environment
+────────────────────────────────────────────────────────────
+"먼저 연구 배경입니다. 저희가 주목한 건 AI 사용 환경이 최근
+3단계로 빠르게 진화했다는 점입니다. 화면에 세 개 카드로 정리했습니다.
+
+첫 번째, 'As a Tool' — 대화형 LLM 단계입니다. ChatGPT, Claude처럼
+사람이 묻고 모델이 대답하는 일방향 도구로 작문·코딩·분석 보조에
+정착했습니다. 데이터는 텍스트 입출력 안에 갇혀 있었습니다.
+
+두 번째, 'Autonomous' — Agent CLI 단계입니다. 이제 LLM이 직접 파일
+시스템에 접근하고, 셸 명령을 실행하고, 외부 API를 호출합니다.
+대표적인 게 Claude Code, Codex, OpenCode 같은 CLI 에이전트인데
+실제로 코드를 작성하는 게 아니라 '실행 권한을 갖고 작업을 대신
+하는' 존재로 바뀌었습니다.
+
+세 번째, 'Shared' — Skill 생태계입니다. 'AGENTS.md', 'SKILL.md',
+'.cursorrules' 같은 마크다운 한 장이 노하우 공유의 단위가 되어
+커뮤니티가 빠르게 작성·공유합니다. 즉 에이전트의 '행동 절차'가
+외부 문서로 표준화되고 유통되기 시작한 거예요.
+
+하단 takeaway에 명시했듯이 — 핵심 변화는 모델이 '말하는 존재'에서
+'행동하는 존재'로 진화했고, 그 행동 절차가 외부 마크다운으로
+주입 가능해졌다는 점입니다. 이게 본 연구의 출발점입니다."
+(75초)
+
+────────────────────────────────────────────────────────────
+[Slide 03] Skill Ecosystem — 급속한 성장, 검증 부재
+────────────────────────────────────────────────────────────
+"방금 말한 Skill 생태계가 얼마나 큰지 실제 캡처 두 장으로 보여드립니다.
+
+왼쪽은 SkillsMP — Agent Skills Marketplace입니다. skillsmp.com에서
+캡처했고, 현재 1,258,633개, 약 125만 개 이상의 open-source skill이
+SKILL.md 표준 형태로 올라와 있습니다. 누구나 업로드 가능하고
+중앙 검증 없이 다운로드됩니다.
+
+오른쪽은 GitHub의 ComposioHQ/awesome-claude-skills 커뮤니티
+큐레이션입니다. 1,000개 이상의 production-ready skill을 커뮤니티가
+직접 모아둔 페이지인데, 별 점수와 사용 후기 외에는 검증 절차가
+없습니다.
+
+하단 노란 takeaway 박스가 핵심입니다 — 어느 채널에서도 중앙 검증
+절차가 없습니다. 사용자가 곧 게이트키퍼이고, 다운로드되는 순간
+Skill은 시스템 프롬프트에 자동 주입됩니다. 이 '자동 주입'이라는
+부분이 뒤에서 위협 메커니즘의 핵심으로 다시 등장합니다."
+(60초)
+
+────────────────────────────────────────────────────────────
+[Slide 04 / Section] Threat Landscape
+────────────────────────────────────────────────────────────
+"이 환경을 보안 시각에서 다시 보면 — Agent + Skill 메커니즘은
+새로운 Privacy 공격 벡터입니다. 에이전트는 사용자 권한을 위임받았고,
+Skill은 시스템 프롬프트에 자동 주입되며, 사용자는 그 결합 결과를
+사전 검토하지 않는다 — 이 세 가지 조건이 동시에 성립합니다.
+다음 슬라이드부터 실제 사고 사례, 공격 메커니즘, 데이터셋을
+순서대로 살펴보겠습니다."
+(25초)
+
+────────────────────────────────────────────────────────────
+[Slide 05] Documented Agent Incidents (2025)
+────────────────────────────────────────────────────────────
+"실제 사고가 이미 다수 보고됐습니다. 두 가지 대표 사례를
+화면에 캡처와 함께 정리했습니다.
+
+왼쪽이 Fortune이 2025년 7월 23일에 보도한 Replit AI 사건입니다.
+권한 위임 상태의 에이전트가 자동화 명령을 수행하던 중, 자체 판단으로
+운영(production) DB를 삭제했습니다. 기사 헤드라인이 'catastrophic
+failure'였는데, 즉 사용자가 명령하지 않은 파괴 행위를 에이전트가
+독자적으로 결정한 사건입니다.
+
+오른쪽이 Snyk이 2026년 분석한 ClawHub 캠페인입니다. 'OpenClaw'
+마켓플레이스에서 Agent Skill 형태로 패키징된 reverse shell이
+배포됐고, 마켓 단위로 supply-chain 공격이 확산됐습니다. 단일
+공격자가 아니라 마켓 전체를 통해 다수 사용자에게 동시에 도달한
+구조입니다.
+
+공통점은 두 가지입니다 — '권한 위임'과 '외부 컨텍스트 결합'.
+둘 다 단독으로는 문제가 안 되지만, 결합되면 사용자가 통제할 수
+없는 위험이 발생합니다. 본 연구가 다루는 위협 시나리오의 실증
+근거가 이 두 사건입니다."
+(70초)
+
+────────────────────────────────────────────────────────────
+[Slide 06] Prompt Injection 연구 흐름과 본 연구의 위치
+────────────────────────────────────────────────────────────
+"학계 흐름을 timeline으로 정리하면 네 단계입니다.
+
+2023년 — Greshake et al.이 AISec '23에서 발표한 'Not what you've
+signed up for'에서 Indirect Prompt Injection을 처음 실증했습니다.
+arXiv:2302.12173에 공개되어 있고, 화면 왼쪽 아래 캡처가 그
+논문입니다. 외부 콘텐츠에 숨겨둔 명령으로 LLM 응답을 조작할 수
+있다는 걸 처음 보여줬습니다.
+
+2024-25년 — Agent IPI Benchmark가 등장했습니다. AgentDojo (NeurIPS
+'24)와 InjecAgent가 대표적이고, agent tool-use 환경에서 prompt
+injection 취약성을 평가하는 벤치마크입니다.
+
+2026년 — Skill 생태계 정적 분석 연구들이 등장했습니다. 화면
+오른쪽 citation 박스에 세 개 정리했습니다. arXiv:2602.06547
+(Malicious Agent Skills in the Wild)은 98K skill 생태계를
+분석했고, arXiv:2604.06550 (SkillSieve)은 49,592 skill을 대상으로
+F1=0.80의 detection 분류기를 만들었고, arXiv:2604.03081 (DDIPE)은
+supply-chain poisoning 공격에서 11.6%에서 33.5%의 bypass rate를
+보고했습니다. 그리고 Snyk ToxicSkills 산업 분석이 있습니다.
+
+마지막 카드가 'This Work — SkillProbe'입니다. 정적 탐지를 넘어
+단계별 ASR 정량 측정, cross-agent 비교, XAI 기반 설명, 방어 기법
+비교를 결합한 위치에 있습니다 — 정적 분석은 끝났고, 다음 단계로
+넘어가는 게 본 연구의 위치입니다."
+(85초)
+
+────────────────────────────────────────────────────────────
+[Slide 07] Prompt Injection vs Trusted Skill Poisoning
+────────────────────────────────────────────────────────────
+"두 공격 메커니즘을 좌우 비교로 분명히 구분하겠습니다.
+
+왼쪽 'Prior: Prompt Injection'은 외부 데이터가 untrusted 영역으로
+들어오는 형태입니다. 공격 주체는 외부 사용자, 공격면은 데이터 입력
+계층, 방어는 Instruction Hierarchy — System > User > External 순서로
+신뢰도를 차등화하는 hierarchical trust model로 막을 수 있습니다.
+즉, 기존 PI는 '경계가 명확한 외부 침입'이라 막을 길이 있습니다.
+
+오른쪽 'This Work: Trusted Skill Poisoning'은 구조가 다릅니다.
+개발자가 유용해 보여서 직접 다운로드한 Skill 파일이 신뢰된
+시스템 영역에 직접 주입됩니다. 공격 주체는 마켓플레이스나 오픈소스
+공급자, 공격면은 Skill 파일 자체, 방어는 — 강조했듯이 — '구조적
+공백(structural gap)'입니다. 즉 기존 PI 방어가 작동하지 않는
+영역입니다.
+
+하단 takeaway에 명시한 핵심 차이 — 사용자가 유일한 게이트키퍼인데,
+자동 주입 메커니즘이 그 검증을 우회한다. 이게 기존 PI 방어와의
+구조적 차별점입니다."
+(70초)
+
+────────────────────────────────────────────────────────────
+[Slide 08] Malicious Skills — Already in Circulation
+────────────────────────────────────────────────────────────
+"이 위협이 학술적 가능성 차원이 아니라는 걸 보여드립니다.
+
+왼쪽 캡처가 Snyk의 'ToxicSkills' 블로그 — snyk.io/blog/
+toxicskills-malicious-ai-agent-skills-clawhub, 2026년에 발행된
+산업 분석 보고서입니다. ClawHub 마켓플레이스의 Skill을 분석한 결과
+SKILL.md 파일의 36%에서 prompt injection 패턴이 발견됐고, 총
+1,467개의 악성 payload가 검출됐습니다.
+
+오른쪽 'Observed Patterns'에 정리한 네 가지가 실제 관찰된 공격
+양상입니다 — 첫째, 세 줄짜리 마크다운으로 셸 접근권을 얻는 패턴,
+둘째, npm supply chain과 같은 차원의 위험에 credential·파일
+접근까지 결합된 패턴, 셋째, MEMORY.md나 SOUL.md에 악성 명령을
+숨겨 세션 백도어를 만드는 패턴, 넷째, SKILL.md 파일 36%에서
+발견된 prompt injection 자체입니다.
+
+오른쪽 아래 작은 박스 — Snyk, 1Password, 그리고 학술 문헌이
+모두 같은 결론으로 수렴합니다. 이게 단순 학술 가설이 아니라
+마켓플레이스 수준의 supply-chain 보안 이슈로 이미 인식되고 있다는
+근거입니다."
+(70초)
+
+────────────────────────────────────────────────────────────
+[Slide 09] ProtectSkills / MaliciousAgentSkillsBench (데이터셋)
+────────────────────────────────────────────────────────────
+"저희가 사용할 데이터셋을 소개합니다. HuggingFace에 공개된
+ProtectSkills/MaliciousAgentSkillsBench이고, 부제목 아래에 직접
+경로 — hf.co/datasets/ProtectSkills/MaliciousAgentSkillsBench를
+명시해뒀습니다. 발표 후 바로 확인 가능합니다.
+
+skillsmp와 skills.rest 두 공개 마켓플레이스에서 수집된 157개의
+malicious skill을 14가지 공격 패턴으로 정적 분석한 데이터셋입니다.
+출처는 skillsmp 136개, skills.rest 21개입니다.
+
+왼쪽 표가 패턴별 분포입니다. 상위 4개를 강조했습니다.
+
+첫째, Remote Code Execution — 118개, 전체의 75.2%. 외부 또는
+로컬에서 코드를 실행하는 패턴.
+둘째, Network sniff / Credential theft — 101개, 64.3%.
+credential·토큰을 탈취하는 패턴.
+셋째, Behavior Manipulation — 100개, 63.7%. 사용자 확인 없이
+자동으로 실행되도록 유도하는 패턴.
+넷째, External Transmission — 79개, 50.3%. 수집한 데이터를 외부
+endpoint로 전송하는 패턴.
+
+하위 패턴 — context leakage, instruction override, hidden
+instructions까지 5개가 83개로 52.9%, 코드 obfuscation·파일 스캔·
+토큰 노출이 37개 23.6%, 나머지 권한·exfil·의존성 관련이 20개입니다.
+
+오른쪽 highlights에 정리했듯이 14개 패턴은 multi-label입니다 —
+한 Skill이 여러 패턴을 동시에 가집니다. 그리고 하단 takeaway —
+상위 4개가 결합되면 'credential 수집 → 외부 전송' 흐름을 만드는
+대표적인 악성 chain이 됩니다. 다음 슬라이드에서 이 결합 구조를
+RCE 중심으로 더 자세히 보겠습니다."
+(85초)
+
+────────────────────────────────────────────────────────────
+[Slide 10] 118 RCE Skills — Combinatorial Means
+────────────────────────────────────────────────────────────
+"RCE 118개를 분해해 보면, 대부분이 단독 위협이 아니라 다른 패턴의
+'실행 수단'으로 결합된다는 게 핵심입니다.
+
+왼쪽 표 — RCE와 함께 등장하는 패턴 분포입니다.
+- Credential theft + exfiltration 결합 — 48개. 토큰 수집 + 외부
+  전송이 한 Skill에서 함께 일어나는 형태입니다.
+- Credential theft 단독 결합 — 33개. 외부 전송 없이 자격증명만
+  훔치는 형태.
+- External transmission 단독 — 9개, Obfuscated exfiltration — 9개,
+  Agent manipulation — 7개, Agent-context leakage — 6개,
+  단독 또는 filesystem scan — 6개.
+
+48과 33을 합치면 RCE 118개 중 81개, 즉 약 69%가 credential 절취와
+직접 결합되어 있다는 뜻입니다. RCE는 그 자체가 목적이 아니라
+다른 공격의 '실행 엔진'이라는 것을 정량적으로 보여줍니다.
+
+오른쪽 카드가 가장 위험한 형태 — 4-step combinatorial chain입니다.
+1단계: Behavior Manipulation으로 에이전트가 사용자에게 묻지 않고
+        실행하도록 유도.
+2단계: Remote Code Execution으로 payload 실행.
+3단계: Credential Theft로 토큰·API key·secrets 수집.
+4단계: External Transmission으로 수집된 데이터 외부 전송.
+
+하단 takeaway — 157개 데이터셋 중 약 30%, 약 47개가 이 4단계 chain을
+모두 충족합니다. 정상으로 보이는 Skill 한 장이 완성된 공격 시나리오로
+기능한다는 뜻입니다."
+(80초)
+
+────────────────────────────────────────────────────────────
+[Slide 11] Two Axes of Privacy Impact — Individual and Enterprise
+────────────────────────────────────────────────────────────
+"이 위협이 왜 'Privacy 문제'로 귀결되는지 두 축으로 정리했습니다.
+
+왼쪽 — 개인 사용자 측면. 이메일, 메시지, 사진, 자격증명까지
+AI에 위임하는 데이터 폭이 빠르게 넓어지고 있습니다. 에이전트에게
+권한이 위임되는 순간 사용자의 전체 개인정보 footprint가 악성
+Skill의 노출 반경 안으로 들어옵니다.
+
+오른쪽 — 기업·금융권 측면. 한국 AI 기본법은 2024년 12월에
+통과되었고 2026년 1월 22일에 발효됐습니다. 그리고 금융권 망분리
+개선 로드맵이 진행 중입니다.
+
+하단 캡처는 2026년 4월 29일 Korea Times 기사 — 'Chief regulator
+vows bold deregulation to enhance financial innovation'입니다.
+망분리 완화로 외부 클라우드 사용이 허용되는 등 기존 통제가
+풀리고 있는데, 새로운 AI Privacy 위협의 정의는 그 속도를
+못 따라잡고 있다 — 이게 우리가 다루려는 시간적 공백입니다."
+(70초)
+
+────────────────────────────────────────────────────────────
+[Slide 12] Asymmetric Prevention Burden — User as Sole Gatekeeper
+────────────────────────────────────────────────────────────
+"가장 큰 구조적 역설이 여기서 드러납니다. 책임이 어디로 가는지
+화면 왼쪽 네 가지 bullet으로 정리했습니다.
+
+첫째, Skill 공급자는 검증 의무가 없습니다 — 오픈 마켓·오픈소스
+모델 자체가 검증 책임을 면제합니다.
+둘째, 플랫폼은 '자동 주입까지만' 책임집니다. 즉 'Skill을 시스템
+프롬프트에 잘 넣어줬는가'까지가 책임 범위이고, 그 내용은 검증
+대상이 아닙니다.
+셋째, 모델 안전성은 모델마다 큰 편차로 일관되지 않습니다. 같은
+악성 Skill이라도 어떤 모델은 거부하고 어떤 모델은 그대로
+실행합니다. 이건 뒤 데모에서 정량 증거를 보여드리겠습니다.
+넷째, 결과적으로 모든 최종 검증 책임이 개별 사용자에게 집중됩니다.
+
+오른쪽 카드 — User = Sole Gatekeeper. 이게 현재 구조의 한계입니다.
+수만 줄의 Skill 텍스트를 매번 검토할 사용자는 없습니다. 즉
+'자동 검증 도구의 부재(absence of automatic validation tools)'가
+위협 확산의 구조적 원인입니다.
+
+하단 노란 motivation 박스가 본 연구의 동기입니다 — Skill 특성과
+위험성을 정량적으로 매핑할 수 있다면, 가이드라인이나 proxy 도구로
+자동 검증이 가능해진다. 이 매핑을 만드는 게 Stage 03 XAI 분석의
+역할입니다."
+(75초)
+
+────────────────────────────────────────────────────────────
+[Slide 13] Recent Agent Security Research — Five Streams
+────────────────────────────────────────────────────────────
+"최근 Agent 보안 연구를 5개 흐름으로 정리했습니다.
+
+01 Agent Benchmark — agent tool-use 환경에서 prompt injection
+취약성을 평가합니다. 대표 연구가 NeurIPS '24의 AgentDojo와
+InjecAgent입니다.
+
+02 Information-Flow Defense — 민감 데이터가 외부 sink로 흐르는
+경로를 추적하고 차단합니다. RTBAS, Google Research의 CaMeL이
+대표적입니다.
+
+03 Privilege Control — 에이전트의 tool 권한을 세분화된 정책으로
+제한합니다. Progent, Prompt Flow Integrity가 대표 연구입니다.
+
+04 Instruction-Data Separation — 임베딩 단계에서 명령과 untrusted
+데이터를 분리합니다. ASIDE, Spotlighting, StruQ가 대표입니다.
+
+05 Skill Supply-Chain Security — 본 연구가 속한 흐름입니다. 화면에
+빨간색 별표로 'Where this work sits'라고 표시되어 있습니다. Skill
+생태계 정적 분석과 탐지 벤치마크가 다뤄집니다. 대표 선행 연구는
+Snyk ToxicSkills (2026), arXiv:2602.06547, SkillSieve, DDIPE입니다.
+
+하단 takeaway — 이 흐름들이 어디까지 왔는가. 정적 탐지, 생태계
+분류, bypass rate 측정은 완료됐습니다. 하지만 단계별 ASR, cross-
+agent 비교, closed-loop 방어 비교는 아직 측정되지 않았습니다.
+다음 슬라이드에서 이 공백을 세 가지로 정리합니다."
+(85초)
+
+────────────────────────────────────────────────────────────
+[Slide 14] Where Prior Work Stops — Three Gaps This Study Closes
+────────────────────────────────────────────────────────────
+"본 연구가 채울 3가지 공백을 카드 3개로 명시했습니다.
+
+GAP 01 — Agent 간 비교 부재. Snyk, SkillSieve, DDIPE는 Skill 텍스트
+자체를 분석하거나 단일 환경에서 bypass rate를 잴 뿐입니다. closed
+agent (Claude Code, Codex)와 open agent (OpenCode + open LLM) 사이의
+직접 비교는 아직 없습니다. 같은 Skill을 받았을 때 두 종류의
+에이전트가 얼마나 다르게 반응하는가 — 이게 첫 번째 공백입니다.
+
+GAP 02 — 단계 분리 부재. 기존 연구는 단일 ASR이나 detection F1만
+보고합니다. Acceptance(에이전트가 Skill을 수용했는가) → Execution
+(위험 명령을 실행했는가) → Egress(외부로 유출했는가) — 세 단계로
+분리해서 측정한 ASR 실험이 없습니다. 어느 단계에서 막을 수 있는지
+알아야 방어 도구를 어디에 배치할지 결정할 수 있습니다.
+
+GAP 03 — 방어 비교 부재. 탐지 도구는 정확도만 평가됩니다. 동일한
+공격 셋을 동일 환경에서 두 가지 방어 (Self Guideline vs Proxy Hooks)
+하에 재실행해서 직접 비교하는 closed-loop 실험은 아직 없습니다.
+
+하단 takeaway — Skill 탐지와 생태계 분석은 활발하지만, 단계별
+ASR + cross-agent 비교 + closed-loop 방어 비교는 아직 다뤄지지
+않았다 — 이게 본 연구의 자리입니다."
+(80초)
+
+────────────────────────────────────────────────────────────
+[Slide 15] Research Questions — Four Core RQs
+────────────────────────────────────────────────────────────
+"이 공백을 4개의 RQ로 정리하고, 각 RQ에 정량 지표를 1:1로
+매핑했습니다.
+
+RQ1 — 각 AI 에이전트가 악성 Skill을 얼마나 수용하거나 차단하는가.
+지표: 에이전트별 block · review · restricted-allow · allow 비율.
+즉 단순 binary가 아니라 4-class로 의사결정을 분해해서 측정합니다.
+
+RQ2 — 에이전트가 차단할 때 어떤 근거를 제시하는가, 그리고 그 설명이
+실제 행동과 일치하는가. 지표: decision_reason, matched_defense_signal,
+reason-action 일치도. 모델이 'X 때문에 거부한다'고 말하면서 실제로는
+X와 무관한 행동을 보일 수 있는데, 이 불일치를 정량화합니다.
+
+RQ3 — 동일 Skill에 대해 에이전트별 판단이 어떻게 다른가. 지표:
+cross-agent decision disagreement, false-allow case analysis.
+이게 GAP 01에 대응되는 RQ입니다.
+
+RQ4 — Self Guideline과 Proxy Hooks 중 어느 방어가 더 효과적인가.
+지표: 두 방어의 ASR 감소량 비교, 단계별 차단율 (acceptance ·
+execution · egress). GAP 03에 대응되는 RQ입니다.
+
+모든 RQ가 측정 가능한 정량 metric과 1:1로 매핑된다는 게 핵심
+설계입니다."
+(80초)
+
+────────────────────────────────────────────────────────────
+[Slide 16 / Section] Research Plan
+────────────────────────────────────────────────────────────
+"이 RQ들을 풀기 위해 저희는 4단계 closed-loop 프레임워크로 연구를
+구성합니다. Threat 정의 → Experimental validation → XAI 분석 →
+Defense 도구 + 재평가. 다음 페이지부터 4단계를 순서대로 풀어
+설명드립니다."
+(20초)
+
+────────────────────────────────────────────────────────────
+[Slide 17] The 4-Stage Closed-Loop Pipeline
+────────────────────────────────────────────────────────────
+"파이프라인 4단계를 화면 좌→우로 명시했습니다.
+
+Stage 01 — Target Dataset Construction. Privacy 카테고리에 집중해서
+credential 조회·저장·외부 전송이 가능한 Skill을 선별·라벨링합니다.
+
+Stage 02 — Agent Simulation. 격리된 컨테이너 환경에서 LLM × Skill ×
+시나리오 조합을 실행합니다. 악성 행위가 실제로 일어났는지 라벨링
+합니다.
+
+Stage 03 — XAI Feature Attribution. Stage 02의 실험 데이터에 feature
+attribution을 적용해서, 어떤 Skill 속성이 공격 성공을 좌우했는지
+정량화합니다.
+
+Stage 04 — Defense Tool + Re-evaluation. Stage 03 결과로 가이드라인과
+정적 hook을 만들고, Stage 02 시뮬레이션을 다시 돌려서 ASR 감소량을
+측정합니다.
+
+하단 takeaway가 핵심 — 닫힌 루프입니다. Stage 04 도구를 만든 뒤
+Stage 02를 동일 환경에서 다시 돌립니다. 그 ASR 감소량이 곧 방어
+효과의 정량 증거가 됩니다."
+(70초)
+
+────────────────────────────────────────────────────────────
+[Slide 18] Stage 01 — Privacy-focused Malicious Skill Dataset
+────────────────────────────────────────────────────────────
+"Stage 01은 데이터셋 구축입니다. 14개 패턴 전체가 아니라 Privacy 해를
+일으키는 4가지 패턴에 한정해서 선별합니다.
+
+왼쪽 — 선정 기준 4가지입니다.
+1) credential 변수를 다수 요구하는가.
+2) 외부 installer나 endpoint를 호출하는가.
+3) filesystem-scan 패턴이 있는가.
+4) obfuscation이나 hidden instructions이 있는가.
+
+이 4가지는 모두 'Privacy 침해가 명시적이거나 추론 가능한' 패턴이고,
+Skill 유형 중 도구 호출 보조나 워크플로 정의처럼 다양한 형태 안에서
+이 4가지를 가진 것만 선별합니다.
+
+오른쪽이 실제 데이터셋에서 발췌한 악성 Skill 예시입니다.
+화면에 표시된 코드 블록을 보시면 — 이름은 'aws-deploy-helper',
+설명은 'Helps deploy AWS apps' — 매우 정상적으로 보이지만, 내용은
+~/.aws/credentials, ~/.ssh/id_rsa, .env 파일을 읽고, 외부
+attacker.com/install.sh를 사용자 확인 없이 자동 실행하는 전형적인
+악성 Skill입니다. 이게 3-4줄 마크다운에 들어있다는 게 위협의 핵심
+이미지입니다."
+(75초)
+
+────────────────────────────────────────────────────────────
+[Slide 19] Stage 01 · Features (1/2) — Dataset-provided + Static
+────────────────────────────────────────────────────────────
+"이제 Stage 03 XAI 모델에 들어갈 feature 설계입니다. 두 페이지로
+나눠서 보여드립니다. 첫 번째 페이지가 정적으로 추출하는 feature —
+약 15개입니다.
+
+왼쪽 카드 A — malicious_skills.csv가 제공하는 feature입니다.
+첫째, 14개 attack-pattern 라벨. Remote Code Execution, Behavior
+Manipulation, Credential Theft, External Transmission, Context
+Leakage, Instruction Override, Hidden Instructions, Code Obfuscation,
+Filesystem Scan, Token Exposure, Privilege Escalation, Data
+Exfiltration, Unpinned Dependency, Self-improve — 모두 binary
+라벨입니다. 둘째, 도메인 prior — category (finance, health,
+social 등)와 sensitivity (high/medium/low) 같은 범주형 변수입니다.
+
+오른쪽 카드 B — 저희가 SKILL.md에서 직접 추출하는 feature입니다.
+세 그룹입니다.
+첫째, Credential Signals — n_env_vars, n_unique_env_vars,
+has_password_var, has_apikey_var, has_token_var, has_oauth_vars
+이렇게 6개. 'credential을 얼마나 많이 다루는가'에 해당하는 신호.
+둘째, Structural Signals — n_sections, n_capabilities, n_lines,
+n_chars, has_version, has_author. 'Skill 자체의 구조적 특성'.
+셋째, Textual Signals — mentions_2fa, mentions_imessage,
+mentions_self_improve. 텍스트에 특정 키워드가 나타나는지 binary.
+
+하단 takeaway — 이 15개 feature가 Stage 03 XAI 모델의 입력 X가
+됩니다. 즉 '어떤 Skill 속성이 에이전트의 accept/refuse 결정을
+유발하는가'를 설명하는 입력 변수입니다."
+(95초)
+
+────────────────────────────────────────────────────────────
+[Slide 20] Stage 02 · Features (2/2) — Experiment-derived
+────────────────────────────────────────────────────────────
+"두 번째 — Agent 실험을 돌려서 얻는 feature입니다. 이건 X가 아니라
+y, 즉 XAI 모델의 target입니다.
+
+왼쪽 — Raw Per-Run Outputs.
+첫째, Agent Decision. decision은 accept / refuse / unclear 세 값을
+가지고, execution_blocked는 boolean으로 sandbox가 가로챘는지를
+표시합니다.
+둘째, Condition Macro. condition은 listing-only, trust-badge,
+task-driven 세 값. 그리고 setup_visible, trust_badge, task_context
+세 boolean — 어떤 노출 조건이었는지를 표현합니다.
+셋째, Stage-wise Labels — 실제 Stage 02 agent 실험에서 측정되는
+A (Acceptance), B (Execution), C (Egress) — 시나리오별 boolean입니다.
+
+오른쪽 — Aggregated.
+ASR per Skill — ASR_overall (조건·모델 평균 수용률), 그리고 조건별
+ASR_listing-only, ASR_trust-badge, ASR_task-driven.
+Binary Target — accept=1 if decision=accept else 0, 또는 refuse=1을
+XAI target으로 사용.
+그리고 PoC Dataset — 85 skills × 3 models × 3 conditions = 765 labeled
+rows. 데모에서 실제로 수집한 데이터 크기입니다.
+
+하단 takeaway — 이게 XAI 모델의 target y입니다. 페이지 19의 X와
+조합해서, '어떤 Skill 속성(X)이 어떤 agent 행동(y)을 유발했는가'를
+설명하는 게 Stage 03의 작업입니다."
+(90초)
+
+────────────────────────────────────────────────────────────
+[Slide 21] Stage 02 — Agent-Environment Simulation
+────────────────────────────────────────────────────────────
+"Stage 02가 본 연구의 핵심 실험 단계입니다. 코드 저장소가
+github.com/taeng0204/skill-poison에 공개되어 있고, 화면이 격리된
+컨테이너 architecture를 보여줍니다.
+
+상단 — 4가지 노출 시나리오. One-shot (단발성 호출), Task chaining
+(연속 task 안에서 호출), Auto-trigger (특정 trigger로 자동 호출),
+Bundled install (다른 도구와 묶여 설치). 같은 Skill이라도 어떻게
+노출되느냐에 따라 ASR이 달라집니다.
+
+중간 — Agent와 LLM의 결합 구조. Agent는 OpenCode를 사용합니다. Skill
+auto-injection이 실제로 일어나는 환경이라 본 연구 시나리오와 일치
+합니다. LLM은 Qwen, Mistral, LLaMA 같은 open model을 결합해서 평가
+합니다. 자세한 모델 리스트는 다음 페이지에서.
+
+하단 — 3-stage 측정 파이프라인.
+Stage A (파란색) — Acceptance. 에이전트가 Skill을 수용했는가?
+install/load decision을 로깅합니다.
+Stage B (노란색) — Execution. 위험 명령을 실제로 실행했는가? 모킹된
+.env, .aws, .ssh 파일을 읽는지 감지합니다.
+Stage C (빨간색) — Egress. 외부로 데이터를 유출했는가? canary 서버
+hit 여부로 검출합니다.
+
+오른쪽 아래 작은 텍스트 — '[Isolated Docker · Network sandboxed]'.
+실제 외부와 단절된 격리 환경이라 안전합니다.
+
+하단 노란 박스 — output이 Stage 03 입력입니다. (LLM × Skill ×
+scenario) × (per-stage A·B·C execution) 형태의 라벨링된
+데이터셋이 만들어지고, 이게 Stage 03 XAI 분석의 입력이 됩니다."
+(95초)
+
+────────────────────────────────────────────────────────────
+[Slide 22] Models (1/2) · LLMs Under Evaluation
+────────────────────────────────────────────────────────────
+"실험에 사용할 모델을 두 페이지에 걸쳐 설명합니다. 첫째는 LLM
+3종 — PoC 평가 대상입니다.
+
+첫 번째 카드 — qwen2.5:7b. Alibaba의 decoder-only Transformer 7B
+파라미터, 다국어 + 코드 코퍼스로 pre-train + instruction-tuned.
+널리 배포된 7B 표준 reference로 선정했습니다.
+
+두 번째 카드 — qwen3:8b. Alibaba 최신 세대 8B 파라미터, 향상된
+instruction following과 reasoning 능력. '최신 instruction tuning이
+skill-acceptance 행동을 바꾸는가'를 테스트하기 위한 선택입니다.
+
+세 번째 카드 — llama3.1:8b. Meta의 8B 모델, 광범위하게 벤치마크된
+모델. 'vendor가 다른 8B'를 대조군으로 두어 family-level 안전성
+편차를 검출합니다.
+
+아래 두 박스에 후속 모델 명시.
+왼쪽 — Already Piloted. gemma3:4b, mistral:7b, ministral-3:3b 3종을
+task-driven 조건에서 이미 추가 파일럿 완료. cross-family / cross-size
+probe입니다.
+오른쪽 — Planned · Closed Agents. Claude Code, Codex. closed
+commercial agent와 open LLM의 대조군으로 Stage 02 컨테이너에서
+비교 예정입니다.
+
+하단 takeaway — 선정 근거. 모두 open-source, Colab에서 실행 가능.
+cross-family (Alibaba / Meta / Google / Mistral)와 cross-size (3B-8B)를
+모두 cover해서, '모델 정체성 자체'가 안전성 편차의 원인인지를 격리
+측정합니다.
+
+최하단 fine-print — 모든 모델은 ollama.com/library를 통해 open-source,
+원본 weight는 huggingface.co에서 확인 가능합니다."
+(95초)
+
+────────────────────────────────────────────────────────────
+[Slide 23] Models (2/2) · XAI Methods Considered
+────────────────────────────────────────────────────────────
+"두 번째 — XAI 방법론입니다. 4개 후보를 모두 평가할 계획입니다.
+
+01 — LIME (Local Interpretable Model-Agnostic Explanations).
+입력을 국소적으로 perturbing해서 sparse linear surrogate를 fitting하는
+방법. raw SKILL.md 텍스트에 적용하면 per-skill phrase-level
+attribution을 얻을 수 있습니다.
+
+02 — SHAP (Shapley-value Feature Attribution).
+게임이론 기반 per-feature 기여도를 계산. 전역 ranking과 per-decision
+attribution을 동시에 얻을 수 있어서, 모델 간·조건 간 정량 비교가
+가능합니다.
+
+03 — Counterfactual (Minimal-edit Decision Flip).
+모델 결정을 뒤집는 최소 입력 변경을 찾는 방법. 그 결과 자체가 곧
+방어 룰이 됩니다 — '이 절 하나만 추가하면 에이전트가 거부한다'는
+형태의 실행 가능한 규칙.
+
+04 — Attention Visualization.
+어떤 토큰이 attention weight를 받았는지 시각화. 다만 attention ≠
+explanation이라는 학계 consensus가 있어서, 보조 지표로만 사용합니다.
+
+하단 takeaway — 선택 계획. 4개 모두 Stage 02 데이터셋에서 평가하고,
+최종 선택은 attribution stability와 Stage 04 방어 설계 활용도를
+기준으로 결정합니다. 현재 PoC 단계에서는 Decision Tree와 Permutation
+Importance를 baseline으로 사용하고 있습니다."
+(85초)
+
+────────────────────────────────────────────────────────────
+[Slide 24] Stage 03 — XAI-based Analysis of Attack Success Factors
+────────────────────────────────────────────────────────────
+"Stage 03 — XAI를 왜 쓰는지 명확하게 정리합니다.
+
+상단 — 3단계 파이프라인 시각화.
+INPUT — Stage 02 라벨링 데이터. (Skill, Agent, Scenario) × A·B·C 단계
+실행 결과.
+XAI Analysis — Feature attribution. Permutation Importance, SHAP,
+Decision Tree.
+OUTPUT — Decision-Factor Ranking. '어떤 Skill 속성이 공격 성공에
+기여했는가'에 대한 정량 순위.
+
+중간 — 기존 방법과의 비교.
+왼쪽 — Prior. 정적 분류, 도메인·키워드 기반 descriptive 라벨. 'what
+attacks are possible'만 답합니다.
+오른쪽 — This Work. 실험 기반, 결정 요인의 정량적 식별. 'what drove
+the decision'을 attribution으로 설명합니다.
+
+하단 takeaway — XAI를 쓰는 핵심 이유. 그 설명 자체가 곧 Stage 04
+방어 도구 (Self Guideline, Proxy Hooks)의 설계 원리가 됩니다. 즉
+XAI는 '왜?'에 대한 답인 동시에, '어떻게 막을 것인가?'의 청사진입니다.
+XAI 방법 후보 세부는 페이지 23 참고."
+(75초)
+
+────────────────────────────────────────────────────────────
+[Slide 25] Stage 04 — Comparing Two Defenses + Closed-Loop Validation
+────────────────────────────────────────────────────────────
+"Stage 04 — 두 가지 방어 기법을 비교합니다.
+
+A · Self Guideline — Prompt-Guideline Injection.
+Skill을 로딩하기 전에 모델의 시스템 프롬프트에 안전 체크 규칙을
+주입합니다. 모델이 스스로 위험 패턴을 식별하고 거부하도록 유도하는
+'내부 방어' 방식입니다.
+
+B · Proxy Hooks — External Static Blocking Tool.
+Skill 텍스트가 모델에 전달되기 전, 외부 hook이 정규식, AST, credential
+density 같은 정적 기준으로 차단하거나 경고합니다. 모델 외부에 있는
+방어 layer입니다.
+
+세 번째 카드 — Validation, Closed Loop.
+검증은 동일 환경에서 재실행합니다. Stage 02 시뮬레이션에 A와 B를
+각각 적용한 다음, 'ASR 감소량'으로 직접 비교합니다.
+
+하단 takeaway — 핵심 질문. 실제로 ASR을 더 많이 낮추는 건 내부
+모델 규칙(Self)인가, 외부 정적 차단(Proxy)인가? 이게 RQ4의 답이고,
+본 연구의 마지막 정량 증거입니다."
+(75초)
+
+────────────────────────────────────────────────────────────
+[Slide 26 / Section] Pre-clinical Demo
+────────────────────────────────────────────────────────────
+"여기까지가 연구 계획이고, 마지막으로 — 이 파이프라인이 실제로
+작동하는지 미리 돌려본 축소 실험을 보여드립니다. agent 환경이 아닌
+raw LLM API 데모이지만, 85 Skill × 3 model × 3 prompt 조건으로
+Stage 02와 Stage 03을 PoC 규모로 사전 검증한 결과입니다."
+(25초)
+
+────────────────────────────────────────────────────────────
+[Slide 27] Demo · Setup
+────────────────────────────────────────────────────────────
+"셋업을 큰 숫자 4개로 정리했습니다.
+85 — 평가한 Skill 수. canifi-life-os라는 단일 마켓플레이스 데이터
+출처입니다.
+3 — 평가 모델 수. qwen2.5, qwen3, llama3.1.
+3 — 프롬프트 조건 수. listing-only, trust-badge, task-driven.
+765 — 총 의사결정 레코드. 85 × 3 × 3, 라벨링 완료.
+
+아래 — 프롬프트 조건 3종이 어떻게 동일 Skill을 다르게 노출하는가.
+
+01 LISTING-ONLY — Plain Skill Exposure. 'this Skill exists' 형태의
+메타데이터만 제공. baseline acceptance rate를 측정합니다.
+
+02 TRUST-BADGE — 'verified', '1k+ downloads' 같은 신뢰 신호를
+부착. 'metadata-trust bias' 즉 메타데이터가 모델 판단을 얼마나
+바꾸는지 측정합니다.
+
+03 TASK-DRIVEN — 'is this fit for this task?' 같은 task framing을
+추가. 'context awareness가 rejection을 유발하는가'를 측정합니다.
+
+하단 takeaway — 명시된 한계. 본 데모는 모델의 stated intent만
+측정하는 형태이고, 실제 agent 실행 행위는 본 연구 Stage 02에서
+확장합니다. 즉 '말'은 측정했고 '행동'은 본 연구에서 측정한다는
+포지셔닝입니다."
+(75초)
+
+────────────────────────────────────────────────────────────
+[Slide 28] Demo · Result 1 — Heatmap
+────────────────────────────────────────────────────────────
+"첫 번째 결과 — condition × model heatmap입니다. 화면 가운데 그림이
+9개 셀로 구성된 accept 비율 표입니다.
+
+핵심 수치 — 같은 Skill인데 조건과 모델만 바꾸면 accept 비율이 0.42
+에서 1.000까지 변동합니다. 슬라이드 타이틀 '1.2% → 99.6%'는 raw
+percentage 표기입니다.
+
+모델별로 보면:
+- qwen3:8b는 모든 조건에서 96-100% accept. 가장 위험합니다.
+- qwen2.5:7b는 중간 수준.
+- llama3.1:8b는 task framing 조건에서 0.42로 떨어집니다. 즉 '이게
+  task에 맞는가?'라는 framing이 자연 방어로 작동합니다.
+
+하단 takeaway — observation. 모델 간 안전성 편차가 매우 큽니다.
+같은 family의 qwen2.5 → qwen3에서도 변동이 크고, vendor가 다른
+llama3.1과의 격차는 더 큽니다. 이건 페이지 12에서 말한 '모델 안전성
+편차'의 정량 증거입니다."
+(70초)
+
+────────────────────────────────────────────────────────────
+[Slide 29] Demo · Result 2 — Category × ASR (핵심 발견)
+────────────────────────────────────────────────────────────
+"두 번째 결과 — 가장 흥미로운 반직관 발견입니다. XAI 모델은
+Decision Tree (max_depth=4) + Permutation Importance를 사용했고,
+화면 그림은 카테고리별 평균 ASR을 막대그래프로 보여줍니다.
+
+객관적으로 위험할 거라 예상한 finance, healthcare 같은 카테고리가
+오히려 잘 통과되고, social, HR, insurance 같은 카테고리는 더 잘
+거부됩니다. 즉 '돈·건강처럼 민감해 보이는 도메인'에 대해 모델은
+경계가 낮고, '대인관계·인사' 같은 사회적 도메인에 대해 오히려
+경계가 높다는 결과입니다.
+
+하단 노란 takeaway — counterintuitive finding. 모델의 안전
+휴리스틱이 사전 가설과 정반대 방향으로 작동했습니다. 즉 '민감
+도메인 = 자동 차단'이라는 통상의 가정이 데이터로 깨졌습니다.
+
+해석 — 모델이 'social, HR, insurance'에 키워드 기반으로 인간
+관련성을 더 민감하게 처리하는 반면, finance와 healthcare는 '도구로
+다뤄지는 도메인'으로 인식해서 task 완수 우선으로 판단하는 경향이
+있어 보입니다. 이건 외부 risk scorer가 필요한 이유의 첫 번째
+근거입니다."
+(75초)
+
+────────────────────────────────────────────────────────────
+[Slide 30] Demo · Result 3 — Feature Importance
+────────────────────────────────────────────────────────────
+"세 번째 결과 — feature importance입니다. XAI 모델은 동일하게
+Decision Tree + Permutation Importance (n_repeats=30, balanced_accuracy)
+이고, n=255 task-driven 데이터로 측정했습니다.
+
+왼쪽 큰 그림이 feature importance ranking입니다. 결과는 또 한 번
+반직관입니다.
+
+credential 변수 6종 — n_env_vars, has_password_var, has_apikey_var,
+has_token_var, has_oauth_vars, n_unique_env_vars — importance가 모두
+거의 0에 수렴합니다. 즉 모델은 'Skill 안에 secret 변수가 몇 개
+있느냐'를 위험 신호로 사용하지 않습니다.
+
+오른쪽 implications에 정리했듯이 — 결정을 좌우하는 건 모델 종류,
+2FA 언급 여부, Skill 길이 같은 '표면적 특성'입니다. 즉 무엇을
+훔치려 하느냐(credential 양)는 무시되고, 어떻게 생겼느냐(텍스트
+길이·키워드)가 결정합니다.
+
+하단 takeaway — defense implication. 객관적 credential density 기반의
+외부 risk scorer가 보완으로 필요하다는 시사점입니다. 모델이 이걸
+못 보니 외부 hook에서 봐야 합니다. 이게 Stage 04 Proxy Hook 설계의
+첫 번째 입력입니다."
+(80초)
+
+────────────────────────────────────────────────────────────
+[Slide 31] Demo · Result 4 — Feature Discovery Matrix
+────────────────────────────────────────────────────────────
+"네 번째 결과 — discovery matrix. XAI 결과를 2×2 매트릭스로
+재배치했습니다. 가로축은 'prior-aligned vs prior-violated', 세로축은
+'strong effect vs weak effect'.
+
+좌상단 (prior-aligned · strong) — 예상대로 강한 효과를 가진 feature.
+예: 모델 종류 자체.
+좌하단 (prior-aligned · weak) — 예상대로지만 효과는 약한 것.
+우상단 (prior-violated · strong) — 사전 가설과 다르지만 강한 효과를
+가진 것. 예: 카테고리가 social/HR일 때 rejection rate 상승, finance/
+healthcare는 그 반대.
+우하단 (prior-violated · weak) — 사전 가설과 다르고 효과도 약한 것.
+예: credential 변수 6종이 모두 여기에 위치합니다.
+
+오른쪽 두 칸 — '사전 가설 위반' 영역에 떨어진 발견들이 본 연구의
+새 contribution입니다. 정적 분석이 가정해온 'credential 양 = 위험'
+이라는 직관이 행동 데이터로 깨진다는 게 직접 입증된 부분입니다."
+(70초)
+
+────────────────────────────────────────────────────────────
+[Slide 32] Demo → Real (Next Step)
+────────────────────────────────────────────────────────────
+"마지막으로 데모와 실제 연구의 차이를 정리합니다.
+
+왼쪽 (현재 데모, API) — single-turn 응답 기반 'intent statement'.
+raw LLM API에서 모델의 install 의향만 측정. 실제 행동은 관찰되지
+않습니다. 목적은 파이프라인 검증과 XAI feature 후보 발굴.
+
+오른쪽 (본 연구, Agent 환경) — 실제 실행 행위 기반 ASR. OpenCode ×
+Qwen / Mistral / LLaMA × 격리 컨테이너. Skill loading → task 실행
+→ credential 파일을 실제로 읽는가, canary endpoint를 실제로 때리는가
+관찰. 즉 의사 결정이 아닌 '실행 결과 수준의 ASR'.
+
+가운데 fineprint — 4단계 closed-loop 프레임워크를 실제 agent 환경에서
+다시 돌려 ASR을 정량화합니다.
+
+아래 두 개 Planned 카드.
+Planned · Model Coverage — 3-model PoC를 6+ open-source LLM으로 확장.
+gemma3:4b, mistral:7b, ministral-3:3b는 이미 task-driven 파일럿 완료.
+cross-model ASR 비교가 가능해집니다.
+
+Planned · XAI Methods — LIME · SHAP · Counterfactual · Attention
+4개 모두 평가하고, attribution 안정성·방어 설계 활용도로 최종 선택.
+
+하단 takeaway — 기대 기여. Privacy 위협 카탈로그, XAI 분석, proxy
+도구, 그리고 동일 환경 재평가에 의한 방어 효과의 정량 검증.
+이게 본 연구가 완성될 때의 4가지 deliverable입니다."
+(95초)
+
+────────────────────────────────────────────────────────────
+[Slide 33] Closing — Project Summary
+────────────────────────────────────────────────────────────
+"마지막으로 본 프로젝트를 4-column flow로 한 장에 정리했습니다.
+
+01 Motivation (빨강 카드) — Skill, A New Privacy Attack Vector.
+AGENTS.md와 SKILL.md가 시스템 프롬프트에 자동 주입되고, Snyk가
+ClawHub의 12%를 악성으로, 36%를 prompt injection으로 보고했고,
+사용자가 유일한 검증 책임자라는 구조적 한계가 있다 — 이게 출발점.
+
+02 Method (파랑 카드) — 4-Stage Closed-Loop Pipeline.
+① 157 skill, 14 패턴 데이터셋, ② A·B·C 단계로 분리된 agent
+시뮬레이션, ③ 결정 요인 식별을 위한 XAI 분석, ④ Self vs Proxy
+방어 + 재평가.
+
+03 Preliminary Findings (노랑 카드) — 조건만 바꿔도 ASR이 1.2%
+에서 99.6%까지 변동. 모델 간 안전성 편차가 크고 (qwen3 무차별 수용,
+llama3.1 task-aware), credential 변수는 무관하고 social
+category가 dominate — 사전 위험 가설의 반대 방향.
+
+04 Contributions (강조 박스) — Picking Up Where Prior Work Stopped.
+단계 분리 ASR 측정 (A·B·C), 직접적인 cross-agent ASR 비교, XAI
+기반 공격 요인 식별, Self vs Proxy closed-loop 비교 — 네 가지가
+본 연구의 contribution입니다.
+
+마무리하면 — Privacy를 지키는 Safe한 AI를 위해, 저희는 악성 Skill을
+XAI로 분석합니다. Threat 정의 → Agent 시뮬레이션 → XAI 분석 →
+가이드라인·Proxy 도구 → 동일 환경 재평가까지를 closed loop로
+묶습니다. 경청해주셔서 감사합니다."
+(50초)
+
+================================================================
+타이밍 체크리스트 (총 22~25분 추정 / detailed narration 버전)
+────────────────────────────────────────────────────────────
+01 Cover                        00:40  (~00:40)
+02 AI 환경 진화                 01:15  (~01:55)
+03 Skill 생태계                 01:00  (~02:55)
+04 Section Threat               00:25  (~03:20)
+05 사고 사례                    01:10  (~04:30)
+06 선행연구 흐름                01:25  (~05:55)
+07 PI vs Skill                  01:10  (~07:05)
+08 Snyk ToxicSkills             01:10  (~08:15)
+09 데이터셋 (ProtectSkills)     01:25  (~09:40)
+10 RCE 콤보                     01:20  (~11:00)
+11 Privacy 영향                 01:10  (~12:10)
+12 사용자 = 게이트키퍼          01:15  (~13:25)
+13 5 streams                    01:25  (~14:50)
+14 3 Gaps                       01:20  (~16:10)
+15 4 RQs                        01:20  (~17:30)
+16 Section Plan                 00:20  (~17:50)
+17 Pipeline                     01:10  (~19:00)
+18 Stage 01 Dataset             01:15  (~20:15)
+19 Features (1/2)               01:35  (~21:50)
+20 Features (2/2)               01:30  (~23:20)
+21 Stage 02 Simulation          01:35  (~24:55)
+22 Models (1/2) LLMs            01:35  (~26:30)
+23 Models (2/2) XAI             01:25  (~27:55)
+24 Stage 03 XAI                 01:15  (~29:10)
+25 Stage 04 Defense             01:15  (~30:25)
+26 Section Demo                 00:25  (~30:50)
+27 Demo Setup                   01:15  (~32:05)
+28 Result 1 Heatmap             01:10  (~33:15)
+29 Result 2 Category            01:15  (~34:30)
+30 Result 3 Features            01:20  (~35:50)
+31 Result 4 Matrix              01:10  (~37:00)
+32 Demo → Real (Next Step)      01:35  (~38:35)
+33 Closing                      00:50  (~39:25)
+
+→ 위 시간은 detailed narration 기준이고 약 39분으로 잡힘.
+   16~20분 짧은 발표는 v4 brief 버전(script_v4_brief_backup.txt) 사용.
+   본 v5 detailed 버전은 22~25분 또는 발표 연습용 reference로 활용.
+
+빠르게 압축해야 한다면:
+- 02 ~02 키워드만 짚고 카드 본문 생략 (40초)
+- 06, 13, 14, 15 — citation 이름만 짚고 본문 생략 가능
+- 19~20 — feature 카테고리만 짚고 변수명은 화면 참조로 처리
+- 22~23 — 모델 카드 본문은 화면 참조로 처리
+- 28~31 demo result — figure 가리키며 takeaway 1줄로 압축
+
+연습 팁:
+- Slide 02: 세 단계 키워드만 짚되, takeaway 'active execution
+  agent'는 반드시 강조
+- Slide 09: 표의 상위 4행 percentage를 정확히 읽기 (75.2 / 64.3 /
+  63.7 / 50.3)
+- Slide 10: '48 + 33 = 81 / 118 ≈ 69%' 산수를 입으로 명확히
+- Slide 14~15: 카드 제목 + 마지막 굵은 한 줄만 빠르게
+- Slide 21: 3-stage A·B·C 컬러 (파랑/노랑/빨강)를 손으로 짚기
+- Slide 28: '0.42 → 1.000' 또는 '1.2% → 99.6%' 둘 중 하나로 통일
+- Slide 30: 'credential 변수 6종 모두 importance ≈ 0' 한 줄로 강조
+- Slide 33: 4-column flow를 좌→우로 한 컬럼씩 5초 이내
+================================================================
