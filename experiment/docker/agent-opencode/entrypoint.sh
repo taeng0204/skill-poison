@@ -145,21 +145,55 @@ if [[ -f /workspace/.env ]]; then
 fi
 echo ""
 
-echo "📡 Starting filesystem monitor..."
+echo "📡 Starting filesystem monitor (incl. read events)..."
 inotifywait -m -r /workspace \
     --format '%T %e %w%f' \
     --timefmt '%H:%M:%S' \
-    -e create -e modify -e delete -e moved_to \
+    -e create -e modify -e delete -e moved_to -e access -e open \
     > /results/fs_events.log 2>/dev/null &
 FS_MONITOR_PID=$!
 
+# home/agent도 read 이벤트 캡처. opencode 자체 read는 .config 하위 노이즈 많아 제외.
 inotifywait -m -r /home/agent \
-    --exclude '(^/home/agent/\.local|^/home/agent/\.cache)' \
+    --exclude '(^/home/agent/\.local|^/home/agent/\.cache|^/home/agent/\.config/opencode/node_modules)' \
     --format '%T %e %w%f' \
     --timefmt '%H:%M:%S' \
-    -e create -e modify -e delete -e moved_to \
+    -e create -e modify -e delete -e moved_to -e access -e open \
     > /results/fs_home_events.log 2>/dev/null &
 HOME_MONITOR_PID=$!
+
+# Process logger — /proc/*/cmdline 200ms polling. agent가 fork한 모든 명령 캡처.
+# 이전 1초 polling은 opencode의 짧은 child를 놓침. /proc 직접 읽기가 ps보다 빠르고
+# null-byte 구분자라 quote 처리도 정확함.
+echo "📡 Starting process monitor (200ms)..."
+(
+    declare -A seen
+    # 자기 자신/모니터/inotifywait는 제외, 나머지는 모두 기록
+    # node/opencode/bun/sh-c 같은 agent 호출 명령 다 잡음
+    SELF_PID=$$
+    while true; do
+        ts=$(date '+%H:%M:%S.%3N')
+        for pid_dir in /proc/[0-9]*; do
+            pid="${pid_dir#/proc/}"
+            [[ "$pid" == "$SELF_PID" ]] && continue
+            cmdline=$(tr '\0' ' ' < "$pid_dir/cmdline" 2>/dev/null)
+            [[ -z "$cmdline" ]] && continue
+            # 자기 자신 + 인프라 노이즈만 필터
+            case "$cmdline" in
+                *inotifywait*|*"tr "*"cmdline"*|*"sleep 0."*|*"/proc/"*) continue ;;
+            esac
+            # 중복 제거 — pid가 다르면 같은 cmd라도 새 prouns로 기록
+            fp="${pid}:${cmdline:0:200}"
+            if [[ -z "${seen[$fp]:-}" ]]; then
+                seen[$fp]=1
+                ppid=$(awk '/^PPid:/ {print $2}' "$pid_dir/status" 2>/dev/null)
+                printf '%s pid=%s ppid=%s cmd=%s\n' "$ts" "$pid" "${ppid:-?}" "$cmdline" >> /results/process_log.txt
+            fi
+        done
+        sleep 0.2
+    done
+) &
+PROC_MONITOR_PID=$!
 
 sleep 1
 
@@ -193,6 +227,7 @@ echo "=========================================="
 
 kill "${FS_MONITOR_PID}" 2>/dev/null || true
 kill "${HOME_MONITOR_PID}" 2>/dev/null || true
+kill "${PROC_MONITOR_PID}" 2>/dev/null || true
 
 find /workspace -type f -not -path '*/.git/*' | sort > /results/workspace_files.txt 2>/dev/null
 find /workspace -name '.*' -type f -not -path '*/.git/*' | sort > /results/workspace_hidden.txt 2>/dev/null
