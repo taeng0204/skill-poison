@@ -125,6 +125,7 @@ python3 experiment/decision_eval/decision_eval.py \
 
 ## 관련 문서
 
+- [`docs/HYBRID_GPU_SETUP.md`](docs/HYBRID_GPU_SETUP.md) — GPU 없는 머신에서 무료 Kaggle GPU로 본실험 돌리는 하이브리드 셋업 (코드 변경 없이 `OLLAMA_BASE_URL`만 원격 터널로 교체)
 - [`docs/AGENT_EXPERIMENT_DESIGN.md`](docs/AGENT_EXPERIMENT_DESIGN.md) — 본실험 spec, 측정 모델, 한계
 - [`docs/research.md`](docs/research.md) — 선행 연구 5흐름, 연구 공백, RQ 7개
 - [`analysis/prototype_xai_v0/REPORT.md`](analysis/prototype_xai_v0/REPORT.md) — 결정 PoC XAI 결과
