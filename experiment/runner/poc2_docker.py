@@ -638,8 +638,14 @@ def prepare_codex_runtime(session_dir: Path) -> Path:
     if runtime_dir.exists():
         shutil.rmtree(runtime_dir)
 
-    # tmp/ 와 sessions/ (대용량 세션 로그) 제외하고 복사
-    EXCLUDE = {"tmp", "sessions", "log", "cache"}
+    # codex exec 인증/설정에 불필요한 대용량 디렉토리/파일 제외 (세션당 복사 폭발 방지).
+    # plugins(Chrome 번들 384M)·computer-use·browser·logs_2.sqlite(296M) 등이 디스크를 채움.
+    EXCLUDE = {
+        "tmp", ".tmp", "sessions", "log", "logs", "cache",
+        "plugins", "computer-use", "browser", "archived_sessions", "vendor_imports",
+        "generated_images", "shell_snapshots",
+        "logs_2.sqlite", "logs_2.sqlite-wal", "logs_2.sqlite-shm",
+    }
 
     def _ignore(src_dir, names):
         excluded = set()
