@@ -1,0 +1,10 @@
+{
+  "input": "C:\\Users\\user\\Documents\\Codex\\2026-05-07\\codex\\outputs\\merged_runs_features_tier1_qwen3_1_7b_replaced.csv",
+  "output_dir": "C:\\Users\\user\\Documents\\Codex\\2026-05-07\\codex\\outputs\\xai_shap",
+  "target": "stage_c_egress",
+  "rows": 764,
+  "positive_rows": 195,
+  "models": [
+    "catboost"
+  ]
+}
