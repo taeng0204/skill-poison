@@ -22,7 +22,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ripgrep \
     && rm -rf /var/lib/apt/lists/*
 
-RUN npm install -g opencode-ai @ai-sdk/openai-compatible
+# opencode-ai 1.15.11에 핀 — 1.15.13은 ollama/qwen tool-call을 텍스트로 받아
+# 실행하지 못하는 회귀가 있음(맥 빌드에서 확인). 1.15.11은 원격/팀 환경의 작동 버전.
+RUN npm install -g opencode-ai@1.15.11 @ai-sdk/openai-compatible
 
 RUN useradd -m -s /bin/bash agent && \
     mkdir -p /workspace /results /logs /home/agent/.config/opencode && \

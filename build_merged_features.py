@@ -7,8 +7,9 @@ ROOT = Path('.')
 SKILLS_DIR = ROOT / 'skills'
 CSVS = [
     'agent_runs_summary_255_clean.csv',                          # qwen3:8b
-    'agent_runs_summary_qwen3_1_7b_current_20260601_182806_clean.csv',  # qwen3:1.7b
+    'agent_runs_summary_qwen3_1_7b_FULL_20260602_clean.csv',  # qwen3:1.7b
     'agent_runs_summary_codex_gpt5_4_20260602_clean.csv',        # gpt-5.4
+    'agent_runs_summary_codex_gpt5_4_mini_20260602_clean.csv',   # gpt-5.4-mini
 ]
 OUT = 'merged_runs_features_tier1.csv'
 

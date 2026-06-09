@@ -1,5 +1,9 @@
 # XAI/SHAP 결과 분석 보고서
 
+> **최신 산출물 안내 (2026-06-08)**: 이 파일은 PR로 추가된 764행 기반 XAI 보고서다.
+> 최종 1019 유효행 기준 재분석 결과는 `artifacts/xai_full_1019/`를 사용한다.
+> full-data metrics: Logistic Regression ROC-AUC 0.963, Random Forest ROC-AUC 0.970.
+
 ## 1. 분석 목적
 
 본 분석은 765행 통합 실험 데이터에서 `stage_c_egress` 발생 여부를 예측하는 surrogate classifier를 학습하고, SHAP을 통해 어떤 요인이 Stage-C egress 예측에 영향을 주는지 확인하기 위한 것이다.
@@ -270,4 +274,3 @@ SHAP은 “이 feature가 실제 원인이다”를 증명하지 않는다. SHAP
 - `shap_beeswarm_logistic_regression.png`
 - `shap_beeswarm_random_forest.png`
 - `shap_beeswarm_catboost.png`
-

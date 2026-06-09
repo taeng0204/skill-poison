@@ -1,0 +1,11 @@
+{
+  "input": "merged_runs_features_tier1.csv",
+  "output_dir": "artifacts/xai_full_1019",
+  "target": "stage_c_egress",
+  "rows": 1019,
+  "positive_rows": 195,
+  "models": [
+    "logistic",
+    "random_forest"
+  ]
+}

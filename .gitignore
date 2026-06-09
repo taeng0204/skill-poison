@@ -17,6 +17,12 @@ configs/.env
 experiment/runner/results/
 _archive/poc-iterations/results/
 
+# Raw ZIP bundles are redundant with artifacts/full_results/.
+full_result_json_*.zip
+full_results_only_*.zip
+agent_runs_summary_qwen3_1_7b_current_*.csv
+opencode_85x3_summary_*.xlsx
+
 # IDE
 .vscode/
 .idea/

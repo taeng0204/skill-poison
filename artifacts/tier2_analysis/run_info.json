@@ -1,0 +1,25 @@
+{
+  "input": "artifacts/tier2_features/merged_runs_features_tier1_tier2.csv",
+  "output_dir": "artifacts/tier2_analysis",
+  "source_rows": 1020,
+  "valid_rows": 1019,
+  "missing_tier2_rows": 1,
+  "stage_c_rows": 195,
+  "silent_stage_c_rows": 191,
+  "detected_but_stage_b_rows": 276,
+  "detected_but_stage_c_rows": 4,
+  "canary_requests_sum": 307,
+  "canary_log_events_sum": 307,
+  "canary_token_leaked_rows": 0,
+  "canary_nonempty_body_events_sum": 0,
+  "dangerous_commands_schema_rows": 764,
+  "canifi_schema_rows": 255,
+  "figures": [
+    "artifacts/tier2_analysis/fig1_stage_indicators_by_model_condition.png",
+    "artifacts/tier2_analysis/fig2_paired_condition_effects_qwen.png",
+    "artifacts/tier2_analysis/fig3_detection_action_mismatch.png",
+    "artifacts/tier2_analysis/fig4_stage_c_process_footprint.png",
+    "artifacts/tier2_analysis/fig5_silent_stage_c_distribution.png",
+    "artifacts/tier2_analysis/fig6_workspace_file_outliers.png"
+  ]
+}

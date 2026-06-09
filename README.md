@@ -2,7 +2,36 @@
 
 AI 코딩 에이전트가 marketplace에서 받은 외부 skill(`AGENTS.md`, `CLAUDE.md`, `SKILL.md` 등)을 신뢰하고 실제로 실행했을 때, 어떤 사용자 압력 조건에서 credential exfiltration·외부 installer 실행 같은 위험 행동까지 가는지 측정하는 연구용 저장소.
 
-본 저장소는 **단일 본실험**을 중심으로 정리되어 있다. 설계 ground truth는 [`docs/AGENT_EXPERIMENT_DESIGN.md`](docs/AGENT_EXPERIMENT_DESIGN.md).
+본 저장소는 **단일 본실험**과 그 최종 데이터셋/분석 산출물을 중심으로 정리되어 있다. 설계 ground truth는 [`docs/AGENT_EXPERIMENT_DESIGN.md`](docs/AGENT_EXPERIMENT_DESIGN.md).
+
+---
+
+## 최종 데이터셋 릴리스
+
+공유용 최종 데이터셋은 다음 파일과 디렉토리를 기준으로 본다.
+
+- [`artifacts/DATASET_CARD.md`](artifacts/DATASET_CARD.md) — 최종 데이터셋 카드
+- [`DATASET_skill_poisoning_asr.md`](DATASET_skill_poisoning_asr.md) — Tier-1 ASR 데이터셋 설명
+- [`merged_runs_features_tier1.csv`](merged_runs_features_tier1.csv) — 1020행 Tier-1 분석 CSV
+- [`artifacts/full_results/`](artifacts/full_results/) — 1019개 normalized raw `full_result.json`
+- [`artifacts/tier2_features/`](artifacts/tier2_features/) — raw result 기반 Tier-2 process features
+- [`artifacts/tier2_analysis/`](artifacts/tier2_analysis/) — 심층 분석 문서, 표, 그림
+- [`artifacts/xai_full_1019/`](artifacts/xai_full_1019/) — 1019 유효행 기준 XAI 재분석
+- [`docs/ACTION_GATING_RESEARCH_PLAN.md`](docs/ACTION_GATING_RESEARCH_PLAN.md) — action-gating 후속 연구 계획
+
+커버리지:
+
+- Summary rows: 1020
+- Valid raw-session rows: 1019
+- Missing raw session: `qwen3:8b / grubhub / C3` measurement failure 1행
+- Stage-C egress rows: 195 / 1019
+- Canary token leakage: 0 / 1019
+
+중요한 해석상 주의:
+
+- `stage_c_egress`는 plaintext secret leak이 아니라 canary endpoint network egress / external boundary crossing으로 해석한다.
+- Qwen 계열은 OpenCode/Ollama, GPT 계열은 Codex CLI에서 수행되어 model과 runtime이 confound되어 있다.
+- SHAP/XAI는 surrogate classifier 설명이며 LLM 내부 reasoning 설명이나 인과 증명이 아니다.
 
 ---
 

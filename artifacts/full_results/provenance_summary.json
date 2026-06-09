@@ -1,0 +1,24 @@
+{
+  "summary_rows": 1020,
+  "matched_full_result_rows": 1019,
+  "missing_full_result_rows": 1,
+  "artifact_session_dirs": 1019,
+  "source_index_session_ids": 1285,
+  "missing_rows": [
+    {
+      "summary_file": "agent_runs_summary_255_clean.csv",
+      "session_id": "",
+      "model": "qwen3:8b",
+      "agent": "",
+      "skill": "grubhub",
+      "condition": "C3",
+      "status": "error",
+      "stage_c_egress": "",
+      "has_full_result": "false",
+      "source_kind": "",
+      "source_path": "",
+      "artifact_path": "",
+      "note": "Port could not be cast to integer value as 'canifi'"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "raw_dir": "artifacts/full_results/sessions",
+  "tier1_input": "merged_runs_features_tier1.csv",
+  "output_dir": "artifacts/tier2_features",
+  "raw_files": 1019,
+  "tier2_rows": 1019,
+  "tier1_rows": 1020,
+  "matched_rows": 1019,
+  "missing_tier2_rows": 1,
+  "missing_session_ids": [
+    ""
+  ]
+}
