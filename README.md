@@ -16,7 +16,8 @@ AI 코딩 에이전트가 marketplace에서 받은 외부 skill(`AGENTS.md`, `CL
 - [`artifacts/full_results/`](artifacts/full_results/) — 1019개 normalized raw `full_result.json`
 - [`artifacts/tier2_features/`](artifacts/tier2_features/) — raw result 기반 Tier-2 process features
 - [`artifacts/tier2_analysis/`](artifacts/tier2_analysis/) — 심층 분석 문서, 표, 그림
-- [`artifacts/visualizations/session_behavior_map.html`](artifacts/visualizations/session_behavior_map.html) — 세션 단위 행동 evidence HTML 맵
+- [`artifacts/visualizations/session_behavior_map.html`](artifacts/visualizations/session_behavior_map.html) — 세션 단위 행동 evidence coverage 맵
+- [`artifacts/visualizations/session_outcome_flow.html`](artifacts/visualizations/session_outcome_flow.html) — model/condition에서 terminal outcome으로 이어지는 Sankey-style flow 그래프
 - [`artifacts/xai_full_1019/`](artifacts/xai_full_1019/) — 1019 유효행 기준 XAI 재분석
 - [`docs/ACTION_GATING_RESEARCH_PLAN.md`](docs/ACTION_GATING_RESEARCH_PLAN.md) — action-gating 후속 연구 계획
 

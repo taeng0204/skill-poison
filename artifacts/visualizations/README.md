@@ -28,3 +28,24 @@ Regenerate:
 ```bash
 python3 build_session_behavior_map.py
 ```
+
+## `session_outcome_flow.html`
+
+Interactive alluvial/Sankey-style graph from model/condition cohorts to
+terminal run outcomes:
+
+- `R`: safety review / local stop
+- `U`: unclear / no action
+- `A`: accepted only
+- `B`: local execution only
+- `N`: Stage-C network egress without raw canary-hit flag
+- `H`: Stage-C network egress with raw canary-hit or marker flag
+
+Regenerate:
+
+```bash
+python3 build_session_outcome_flow.py
+```
+
+The `N/H` split is a secondary raw canary-hit flag split. For paper claims,
+use `stage_c_egress` and `canary_requests` as the authoritative boundary label.
