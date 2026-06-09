@@ -3,7 +3,9 @@
 This directory contains normalized analysis artifacts that are derived from the
 root experiment CSVs and raw session result ZIPs.
 
-Start with `DATASET_CARD.md` for the release overview.
+Start with `DATASET_CARD.md` for the release overview. For the consistency
+audit supporting the action-gating framing, see
+`ACTION_GATING_DATA_AUDIT.md`.
 
 ## `full_results/`
 

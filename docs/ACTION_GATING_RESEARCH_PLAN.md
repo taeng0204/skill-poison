@@ -58,6 +58,9 @@ Important wording:
   "egress policy violation."
 - Treat Stage A/B/C as observables in an attack progression, not as a strict
   Markov chain.
+- The final data audit found 306 Stage-B rows without Stage-A and 28 Stage-C
+  rows without Stage-A, so Stage-A must be described as a conservative
+  acceptance signal rather than a mandatory predecessor state.
 
 ## Contribution 2: Detection-Action Gap
 
