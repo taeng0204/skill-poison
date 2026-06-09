@@ -65,6 +65,22 @@ Key files:
   process-footprint, skill-rank, and exploratory pattern tables.
 - `fig*.png`: report-ready figures.
 
+## `visualizations/`
+
+Standalone interactive visualizations.
+
+- `session_behavior_map.html`: session-by-feature behavior map using model
+  colors, condition opacity, and run-level evidence cells.
+
+Command:
+
+```bash
+python3 build_session_behavior_map.py
+```
+
+This map is not a turn-by-turn timeline. It visualizes run-level evidence from
+the released CSV/JSON artifacts.
+
 ## `figures/`
 
 Report-ready descriptive figures from the final 1019-row analysis.

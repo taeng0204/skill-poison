@@ -16,6 +16,7 @@ AI 코딩 에이전트가 marketplace에서 받은 외부 skill(`AGENTS.md`, `CL
 - [`artifacts/full_results/`](artifacts/full_results/) — 1019개 normalized raw `full_result.json`
 - [`artifacts/tier2_features/`](artifacts/tier2_features/) — raw result 기반 Tier-2 process features
 - [`artifacts/tier2_analysis/`](artifacts/tier2_analysis/) — 심층 분석 문서, 표, 그림
+- [`artifacts/visualizations/session_behavior_map.html`](artifacts/visualizations/session_behavior_map.html) — 세션 단위 행동 evidence HTML 맵
 - [`artifacts/xai_full_1019/`](artifacts/xai_full_1019/) — 1019 유효행 기준 XAI 재분석
 - [`docs/ACTION_GATING_RESEARCH_PLAN.md`](docs/ACTION_GATING_RESEARCH_PLAN.md) — action-gating 후속 연구 계획
 
@@ -30,6 +31,7 @@ AI 코딩 에이전트가 marketplace에서 받은 외부 skill(`AGENTS.md`, `CL
 중요한 해석상 주의:
 
 - `stage_c_egress`는 plaintext secret leak이 아니라 canary endpoint network egress / external boundary crossing으로 해석한다.
+- HTML behavior map은 turn-by-turn timeline이 아니라 run-level evidence map이다. 전체 LLM 대화 로그와 action별 timestamp는 포함되어 있지 않다.
 - Qwen 계열은 OpenCode/Ollama, GPT 계열은 Codex CLI에서 수행되어 model과 runtime이 confound되어 있다.
 - SHAP/XAI는 surrogate classifier 설명이며 LLM 내부 reasoning 설명이나 인과 증명이 아니다.
 

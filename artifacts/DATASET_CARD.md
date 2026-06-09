@@ -16,6 +16,7 @@ local canary endpoint.
 | `artifacts/ACTION_GATING_DATA_AUDIT.md` | Consistency audit for the staged action-gating framing. |
 | `artifacts/tier2_features/` | Process, command, filesystem, URL, canary, and detection-action features. |
 | `artifacts/tier2_analysis/` | Deep analysis document, tables, and figures. |
+| `artifacts/visualizations/session_behavior_map.html` | Standalone interactive session behavior map. |
 | `artifacts/xai_full_1019/` | Full-data XAI rerun over 1019 valid rows. |
 | `artifacts/figures/` | Paper/report-ready descriptive figures. |
 | `data/masw_malicious_skills.csv` | MASW pattern metadata used for Tier-1 features. |
@@ -100,7 +101,9 @@ Paired condition effects for Qwen/OpenCode:
    mechanism analysis.
 5. Read `artifacts/ACTION_GATING_DATA_AUDIT.md` for the final consistency
    audit.
-6. Read `docs/ACTION_GATING_RESEARCH_PLAN.md` for the next research direction.
+6. Open `artifacts/visualizations/session_behavior_map.html` for an interactive
+   run-level evidence map.
+7. Read `docs/ACTION_GATING_RESEARCH_PLAN.md` for the next research direction.
 
 ## Reproduction Commands
 
@@ -130,6 +133,12 @@ python3 xai_shap_analysis.py \
   --output-dir artifacts/xai_full_1019 \
   --models logistic random_forest \
   --test-size 0.25
+```
+
+Build the standalone session behavior map:
+
+```bash
+python3 build_session_behavior_map.py
 ```
 
 ## Citation and Source Notes
