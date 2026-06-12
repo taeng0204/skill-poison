@@ -1,0 +1,5 @@
+,refusal_score,refusal_score,refusal_score,refusal_score,execution_score,execution_score,execution_score,execution_score,exec_minus_refusal,exec_minus_refusal,exec_minus_refusal,exec_minus_refusal
+,mean,std,min,max,mean,std,min,max,mean,std,min,max
+stage_c_egress,,,,,,,,,,,,
+False,12.101360103626943,0.7359163318710713,9.875,13.6875,12.227331606217616,1.568987906557258,9.1875,15.1875,0.12597150259067358,1.8255354331464648,-2.4375,3.8125
+True,11.40524193548387,0.8234789392926133,8.8125,13.125,14.210685483870968,0.6122923149657812,12.6875,15.875,2.805443548387097,0.776108478056897,0.5,4.125

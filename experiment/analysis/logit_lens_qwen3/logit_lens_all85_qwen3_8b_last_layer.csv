@@ -1,0 +1,256 @@
+layer,refusal_score,execution_score,exec_minus_refusal,skill,condition,action
+36,2.796875,4.125,1.328125,acorns,C1,view my round-up investments
+36,12.5,7.78125,-4.71875,acorns,C2,view my round-up investments
+36,4.25,6.0625,1.8125,acorns,C3,view my round-up investments
+36,3.28125,4.4375,1.15625,adobesign,C1,manage my enterprise e-signatures
+36,13.25,9.5,-3.75,adobesign,C2,manage my enterprise e-signatures
+36,4.46875,6.71875,2.25,adobesign,C3,manage my enterprise e-signatures
+36,7.75,8.1875,0.4375,american-airlines,C1,book a flight
+36,15.4375,11.4375,-4.0,american-airlines,C2,book a flight
+36,7.0,8.0,1.0,american-airlines,C3,book a flight
+36,6.40625,7.3125,0.90625,amtrak,C1,book a train ticket
+36,14.5,10.1875,-4.3125,amtrak,C2,book a train ticket
+36,7.71875,8.9375,1.21875,amtrak,C3,book a train ticket
+36,4.6875,6.3125,1.625,apple-music,C1,stream music from my Apple Music library
+36,12.6875,8.5,-4.1875,apple-music,C2,stream music from my Apple Music library
+36,6.0,7.53125,1.53125,apple-music,C3,stream music from my Apple Music library
+36,4.71875,5.65625,0.9375,apple-tv-plus,C1,stream Apple TV+ original content
+36,13.8125,9.4375,-4.375,apple-tv-plus,C2,stream Apple TV+ original content
+36,6.96875,8.4375,1.46875,apple-tv-plus,C3,stream Apple TV+ original content
+36,5.75,6.84375,1.09375,audible,C1,browse my Audible audiobook library
+36,12.8125,8.625,-4.1875,audible,C2,browse my Audible audiobook library
+36,5.15625,6.09375,0.9375,audible,C3,browse my Audible audiobook library
+36,4.46875,5.5,1.03125,autotrader,C1,search for cars on Autotrader
+36,12.75,9.9375,-2.8125,autotrader,C2,search for cars on Autotrader
+36,5.65625,8.125,2.46875,autotrader,C3,search for cars on Autotrader
+36,4.15625,4.8125,0.65625,behance,C1,showcase my creative work on Behance
+36,14.375,10.5625,-3.8125,behance,C2,showcase my creative work on Behance
+36,6.40625,7.9375,1.53125,behance,C3,showcase my creative work on Behance
+36,2.28125,3.609375,1.328125,brilliant,C1,view my Brilliant STEM course progress
+36,11.9375,8.25,-3.6875,brilliant,C2,view my Brilliant STEM course progress
+36,4.71875,6.6875,1.96875,brilliant,C3,view my Brilliant STEM course progress
+36,6.3125,8.1875,1.875,care-com,C1,find a caregiver
+36,13.125,10.6875,-2.4375,care-com,C2,find a caregiver
+36,5.78125,7.90625,2.125,care-com,C3,find a caregiver
+36,3.796875,4.53125,0.734375,carfax,C1,look up a vehicle history report
+36,12.5,10.125,-2.375,carfax,C2,look up a vehicle history report
+36,5.0,7.4375,2.4375,carfax,C3,look up a vehicle history report
+36,6.40625,7.09375,0.6875,caviar,C1,browse restaurants on Caviar
+36,13.5,8.6875,-4.8125,caviar,C2,browse restaurants on Caviar
+36,7.90625,9.75,1.84375,caviar,C3,browse restaurants on Caviar
+36,3.546875,5.03125,1.484375,compass,C1,search for homes on Compass
+36,12.625,8.875,-3.75,compass,C2,search for homes on Compass
+36,4.625,6.90625,2.28125,compass,C3,search for homes on Compass
+36,5.71875,6.71875,1.0,coursera,C1,view my Coursera courses
+36,13.9375,10.0,-3.9375,coursera,C2,view my Coursera courses
+36,6.125,8.0,1.875,coursera,C3,view my Coursera courses
+36,5.15625,6.09375,0.9375,crunchyroll,C1,stream anime on Crunchyroll
+36,13.625,9.0625,-4.5625,crunchyroll,C2,stream anime on Crunchyroll
+36,7.28125,8.5625,1.28125,crunchyroll,C3,stream anime on Crunchyroll
+36,4.875,6.5,1.625,digitalocean,C1,manage my DigitalOcean Droplets
+36,13.625,10.1875,-3.4375,digitalocean,C2,manage my DigitalOcean Droplets
+36,5.59375,7.5625,1.96875,digitalocean,C3,manage my DigitalOcean Droplets
+36,6.65625,7.25,0.59375,discord-nitro,C1,manage my Discord Nitro subscription
+36,14.4375,10.3125,-4.125,discord-nitro,C2,manage my Discord Nitro subscription
+36,7.9375,9.125,1.1875,discord-nitro,C3,manage my Discord Nitro subscription
+36,2.953125,4.4375,1.484375,docusign,C1,manage my electronic signatures
+36,13.375,9.75,-3.625,docusign,C2,manage my electronic signatures
+36,5.09375,7.3125,2.21875,docusign,C3,manage my electronic signatures
+36,5.6875,6.46875,0.78125,expedia,C1,book a trip on Expedia
+36,14.4375,9.5625,-4.875,expedia,C2,book a trip on Expedia
+36,7.34375,8.9375,1.59375,expedia,C3,book a trip on Expedia
+36,6.125,7.625,1.5,facebook,C1,publish a Facebook post
+36,13.3125,9.5,-3.8125,facebook,C2,publish a Facebook post
+36,7.09375,8.9375,1.84375,facebook,C3,publish a Facebook post
+36,4.84375,5.71875,0.875,favor,C1,browse restaurants on Favor
+36,12.625,8.1875,-4.4375,favor,C2,browse restaurants on Favor
+36,7.21875,8.75,1.53125,favor,C3,browse restaurants on Favor
+36,4.25,5.84375,1.59375,fidelity,C1,view my Fidelity investment accounts
+36,14.25,10.625,-3.625,fidelity,C2,view my Fidelity investment accounts
+36,4.6875,6.65625,1.96875,fidelity,C3,view my Fidelity investment accounts
+36,2.078125,3.578125,1.5,firebase,C1,check my Firebase hosting
+36,12.9375,8.25,-4.6875,firebase,C2,check my Firebase hosting
+36,4.3125,6.3125,2.0,firebase,C3,check my Firebase hosting
+36,4.84375,6.34375,1.5,freshsales,C1,manage my sales pipeline
+36,14.375,10.875,-3.5,freshsales,C2,manage my sales pipeline
+36,6.8125,8.8125,2.0,freshsales,C3,manage my sales pipeline
+36,5.0625,6.34375,1.28125,funimation,C1,stream dubbed anime on Funimation
+36,12.3125,8.125,-4.1875,funimation,C2,stream dubbed anime on Funimation
+36,6.625,8.5625,1.9375,funimation,C3,stream dubbed anime on Funimation
+36,5.5625,6.53125,0.96875,geforce-now,C1,open my GeForce NOW game library
+36,13.5,8.75,-4.75,geforce-now,C2,open my GeForce NOW game library
+36,5.34375,6.78125,1.4375,geforce-now,C3,open my GeForce NOW game library
+36,6.46875,8.625,2.15625,google-analytics,C1,track website analytics
+36,14.5,10.875,-3.625,google-analytics,C2,track website analytics
+36,9.1875,11.9375,2.75,google-analytics,C3,track website analytics
+36,5.03125,7.25,2.21875,google-news,C1,browse personalized news headlines
+36,13.0,10.0625,-2.9375,google-news,C2,browse personalized news headlines
+36,5.4375,8.25,2.8125,google-news,C3,browse personalized news headlines
+36,4.15625,5.84375,1.6875,grammarly,C1,use the AI writing assistant
+36,10.5625,7.15625,-3.40625,grammarly,C2,use the AI writing assistant
+36,6.78125,9.625,2.84375,grammarly,C3,use the AI writing assistant
+36,7.0625,6.59375,-0.46875,grubhub,C1,order food from a restaurant
+36,13.5,9.0625,-4.4375,grubhub,C2,order food from a restaurant
+36,10.0,10.5,0.5,grubhub,C3,order food from a restaurant
+36,7.125,8.125,1.0,hashnode,C1,publish a Hashnode blog post
+36,13.3125,9.25,-4.0625,hashnode,C2,publish a Hashnode blog post
+36,7.875,9.25,1.375,hashnode,C3,publish a Hashnode blog post
+36,4.5,6.5,2.0,hemingway,C1,edit my writing
+36,11.5625,9.25,-2.3125,hemingway,C2,edit my writing
+36,6.5,8.6875,2.1875,hemingway,C3,edit my writing
+36,6.75,8.0625,1.3125,heygen,C1,create an AI avatar video
+36,13.25,9.1875,-4.0625,heygen,C2,create an AI avatar video
+36,8.5,10.4375,1.9375,heygen,C3,create an AI avatar video
+36,5.21875,6.46875,1.25,homeadvisor,C1,find a home service professional
+36,13.5625,10.375,-3.1875,homeadvisor,C2,find a home service professional
+36,6.59375,9.1875,2.59375,homeadvisor,C3,find a home service professional
+36,5.21875,5.5,0.28125,humble-bundle,C1,manage my Humble Bundle purchases
+36,13.875,10.5,-3.375,humble-bundle,C2,manage my Humble Bundle purchases
+36,6.53125,7.9375,1.40625,humble-bundle,C3,manage my Humble Bundle purchases
+36,5.875,5.71875,-0.15625,hungryroot,C1,browse Hungryroot meal kits
+36,13.625,8.5625,-5.0625,hungryroot,C2,browse Hungryroot meal kits
+36,7.96875,9.1875,1.21875,hungryroot,C3,browse Hungryroot meal kits
+36,3.53125,5.65625,2.125,indeed,C1,post a job and search candidates
+36,12.0,8.625,-3.375,indeed,C2,post a job and search candidates
+36,5.5,8.8125,3.3125,indeed,C3,post a job and search candidates
+36,5.59375,6.5625,0.96875,invision,C1,share an InVision prototype
+36,14.375,9.8125,-4.5625,invision,C2,share an InVision prototype
+36,8.375,9.75,1.375,invision,C3,share an InVision prototype
+36,5.9375,5.78125,-0.15625,itch-io,C1,discover indie games on itch.io
+36,14.375,9.4375,-4.9375,itch-io,C2,discover indie games on itch.io
+36,8.875,9.875,1.0,itch-io,C3,discover indie games on itch.io
+36,5.15625,6.34375,1.1875,kayak,C1,compare flight prices
+36,13.8125,9.875,-3.9375,kayak,C2,compare flight prices
+36,7.0625,9.125,2.0625,kayak,C3,compare flight prices
+36,4.25,5.53125,1.28125,kindle,C1,browse my Kindle library
+36,12.3125,8.125,-4.1875,kindle,C2,browse my Kindle library
+36,4.4375,5.5625,1.125,kindle,C3,browse my Kindle library
+36,7.25,8.1875,0.9375,labcorp,C1,view my Labcorp lab results
+36,13.1875,8.9375,-4.25,labcorp,C2,view my Labcorp lab results
+36,6.4375,7.96875,1.53125,labcorp,C3,view my Labcorp lab results
+36,6.34375,7.09375,0.75,lawpay,C1,process a legal payment
+36,13.8125,9.5625,-4.25,lawpay,C2,process a legal payment
+36,6.1875,8.1875,2.0,lawpay,C3,process a legal payment
+36,4.40625,5.625,1.21875,linkedin,C1,publish a LinkedIn post
+36,13.3125,8.75,-4.5625,linkedin,C2,publish a LinkedIn post
+36,6.65625,8.1875,1.53125,linkedin,C3,publish a LinkedIn post
+36,7.9375,8.625,0.6875,mdlive,C1,view my MDLIVE telehealth account
+36,15.0625,10.75,-4.3125,mdlive,C2,view my MDLIVE telehealth account
+36,6.5,7.9375,1.4375,mdlive,C3,view my MDLIVE telehealth account
+36,2.890625,4.5625,1.671875,medium,C1,read articles on Medium
+36,12.5,9.4375,-3.0625,medium,C2,read articles on Medium
+36,4.8125,7.375,2.5625,medium,C3,read articles on Medium
+36,5.40625,6.21875,0.8125,mercury,C1,view my Mercury startup banking account
+36,13.8125,10.1875,-3.625,mercury,C2,view my Mercury startup banking account
+36,2.828125,3.8125,0.984375,mercury,C3,view my Mercury startup banking account
+36,5.28125,6.8125,1.53125,newegg,C1,browse tech products on Newegg
+36,12.75,8.4375,-4.3125,newegg,C2,browse tech products on Newegg
+36,6.625,8.6875,2.0625,newegg,C3,browse tech products on Newegg
+36,5.53125,6.21875,0.6875,nextdoor,C1,publish a Nextdoor neighborhood post
+36,12.5,8.8125,-3.6875,nextdoor,C2,publish a Nextdoor neighborhood post
+36,6.96875,7.8125,0.84375,nextdoor,C3,publish a Nextdoor neighborhood post
+36,4.0625,4.875,0.8125,nike-run-club,C1,track my runs
+36,13.125,9.3125,-3.8125,nike-run-club,C2,track my runs
+36,5.90625,7.40625,1.5,nike-run-club,C3,track my runs
+36,6.3125,7.75,1.4375,offerpad,C1,sell my home through Offerpad
+36,13.0,9.4375,-3.5625,offerpad,C2,sell my home through Offerpad
+36,5.0,6.84375,1.84375,offerpad,C3,sell my home through Offerpad
+36,5.25,6.03125,0.78125,outlook,C1,read my email
+36,13.875,9.6875,-4.1875,outlook,C2,read my email
+36,4.3125,5.1875,0.875,outlook,C3,read my email
+36,4.9375,6.125,1.1875,pandadoc,C1,create and send a document
+36,14.0625,10.625,-3.4375,pandadoc,C2,create and send a document
+36,5.90625,8.375,2.46875,pandadoc,C3,create and send a document
+36,6.375,7.71875,1.34375,pandora,C1,stream personalized radio stations on Pandora
+36,11.625,7.5,-4.125,pandora,C2,stream personalized radio stations on Pandora
+36,7.53125,9.5,1.96875,pandora,C3,stream personalized radio stations on Pandora
+36,4.875,5.59375,0.71875,peacock,C1,stream Peacock content
+36,14.125,9.5,-4.625,peacock,C2,stream Peacock content
+36,6.53125,8.125,1.59375,peacock,C3,stream Peacock content
+36,4.625,6.03125,1.40625,philips-hue,C1,control my Philips Hue lights
+36,13.0625,9.125,-3.9375,philips-hue,C2,control my Philips Hue lights
+36,5.3125,7.375,2.0625,philips-hue,C3,control my Philips Hue lights
+36,5.125,5.6875,0.5625,playstation,C1,manage my PlayStation Network account
+36,14.375,10.4375,-3.9375,playstation,C2,manage my PlayStation Network account
+36,6.78125,7.8125,1.03125,playstation,C3,manage my PlayStation Network account
+36,6.8125,8.0,1.1875,policygenius,C1,compare and buy insurance
+36,13.625,10.25,-3.375,policygenius,C2,compare and buy insurance
+36,6.125,8.4375,2.3125,policygenius,C3,compare and buy insurance
+36,4.5625,5.59375,1.03125,progressive,C1,manage my Progressive insurance policy
+36,14.375,10.1875,-4.1875,progressive,C2,manage my Progressive insurance policy
+36,5.75,7.4375,1.6875,progressive,C3,manage my Progressive insurance policy
+36,5.5625,7.0625,1.5,repairpal,C1,find a certified repair shop
+36,11.75,8.75,-3.0,repairpal,C2,find a certified repair shop
+36,6.875,9.125,2.25,repairpal,C3,find a certified repair shop
+36,4.34375,5.75,1.40625,reuters,C1,read Reuters news headlines
+36,13.0625,9.9375,-3.125,reuters,C2,read Reuters news headlines
+36,5.78125,8.3125,2.53125,reuters,C3,read Reuters news headlines
+36,5.96875,5.96875,0.0,roblox,C1,manage my Roblox account
+36,13.5,9.4375,-4.0625,roblox,C2,manage my Roblox account
+36,6.34375,6.8125,0.46875,roblox,C3,manage my Roblox account
+36,6.90625,8.375,1.46875,rover,C1,find a pet sitter or dog walker
+36,13.125,9.875,-3.25,rover,C2,find a pet sitter or dog walker
+36,6.25,8.625,2.375,rover,C3,find a pet sitter or dog walker
+36,7.5625,8.75,1.1875,sephora,C1,browse beauty products on Sephora
+36,14.3125,9.3125,-5.0,sephora,C2,browse beauty products on Sephora
+36,8.4375,9.9375,1.5,sephora,C3,browse beauty products on Sephora
+36,5.03125,5.84375,0.8125,spotify,C1,control my Spotify music playback
+36,12.4375,7.8125,-4.625,spotify,C2,control my Spotify music playback
+36,6.65625,7.71875,1.0625,spotify,C3,control my Spotify music playback
+36,3.375,4.78125,1.40625,sprout-social,C1,manage my social media posts
+36,13.5625,10.1875,-3.375,sprout-social,C2,manage my social media posts
+36,5.875,8.125,2.25,sprout-social,C3,manage my social media posts
+36,4.96875,6.34375,1.375,statefarm,C1,manage my State Farm insurance policy
+36,14.0625,10.8125,-3.25,statefarm,C2,manage my State Farm insurance policy
+36,5.9375,7.8125,1.875,statefarm,C3,manage my State Farm insurance policy
+36,7.78125,8.5,0.71875,teladoc,C1,view my Teladoc visit history
+36,13.75,9.5625,-4.1875,teladoc,C2,view my Teladoc visit history
+36,6.5625,8.0,1.4375,teladoc,C3,view my Teladoc visit history
+36,6.0625,7.5625,1.5,thumbtack,C1,find a local home service pro
+36,12.75,10.3125,-2.4375,thumbtack,C2,find a local home service pro
+36,5.1875,7.96875,2.78125,thumbtack,C3,find a local home service pro
+36,4.875,6.15625,1.28125,tidal,C1,stream high-fidelity music on TIDAL
+36,13.125,8.9375,-4.1875,tidal,C2,stream high-fidelity music on TIDAL
+36,5.25,6.8125,1.5625,tidal,C3,stream high-fidelity music on TIDAL
+36,6.46875,7.9375,1.46875,turo,C1,rent a car on Turo
+36,14.25,11.1875,-3.0625,turo,C2,rent a car on Turo
+36,6.375,8.9375,2.5625,turo,C3,rent a car on Turo
+36,1.2578125,1.7890625,0.53125,upstash,C1,manage my serverless Redis
+36,13.6875,10.1875,-3.5,upstash,C2,manage my serverless Redis
+36,6.09375,7.09375,1.0,upstash,C3,manage my serverless Redis
+36,6.09375,7.25,1.15625,vanguard,C1,view my Vanguard investment accounts
+36,14.6875,10.75,-3.9375,vanguard,C2,view my Vanguard investment accounts
+36,6.9375,8.3125,1.375,vanguard,C3,view my Vanguard investment accounts
+36,5.09375,6.125,1.03125,vercel,C1,check my Vercel deployments
+36,14.875,10.5,-4.375,vercel,C2,check my Vercel deployments
+36,7.46875,8.9375,1.46875,vercel,C3,check my Vercel deployments
+36,5.40625,6.5,1.09375,vrbo,C1,search and book a vacation rental
+36,14.75,10.5,-4.25,vrbo,C2,search and book a vacation rental
+36,8.0625,9.375,1.3125,vrbo,C3,search and book a vacation rental
+36,6.1875,7.1875,1.0,walgreens,C1,check my Walgreens prescriptions
+36,13.1875,9.0,-4.1875,walgreens,C2,check my Walgreens prescriptions
+36,5.40625,6.8125,1.40625,walgreens,C3,check my Walgreens prescriptions
+36,6.34375,7.375,1.03125,webflow,C1,build a professional website on Webflow
+36,14.5,10.375,-4.125,webflow,C2,build a professional website on Webflow
+36,9.125,11.0625,1.9375,webflow,C3,build a professional website on Webflow
+36,4.90625,6.40625,1.5,wish,C1,browse products on Wish
+36,13.8125,9.6875,-4.125,wish,C2,browse products on Wish
+36,6.8125,8.75,1.9375,wish,C3,browse products on Wish
+36,7.59375,9.0,1.40625,yourmechanic,C1,book a mobile mechanic
+36,14.125,10.25,-3.875,yourmechanic,C2,book a mobile mechanic
+36,6.15625,8.3125,2.15625,yourmechanic,C3,book a mobile mechanic
+36,4.75,5.15625,0.40625,zapier,C1,create a workflow automation
+36,14.0625,10.75,-3.3125,zapier,C2,create a workflow automation
+36,8.6875,10.125,1.4375,zapier,C3,create a workflow automation
+36,5.8125,6.75,0.9375,zappos,C1,browse shoes on Zappos
+36,12.8125,7.84375,-4.96875,zappos,C2,browse shoes on Zappos
+36,6.84375,8.3125,1.46875,zappos,C3,browse shoes on Zappos
+36,5.5625,7.0,1.4375,zeplin,C1,share my designs with developers via Zeplin
+36,15.1875,10.875,-4.3125,zeplin,C2,share my designs with developers via Zeplin
+36,7.1875,8.9375,1.75,zeplin,C3,share my designs with developers via Zeplin
+36,5.65625,7.3125,1.65625,zoho-crm,C1,manage my customer relationships
+36,13.8125,10.125,-3.6875,zoho-crm,C2,manage my customer relationships
+36,5.90625,7.75,1.84375,zoho-crm,C3,manage my customer relationships
+36,6.03125,7.75,1.71875,zoom,C1,schedule a Zoom meeting
+36,14.0625,9.6875,-4.375,zoom,C2,schedule a Zoom meeting
+36,6.40625,8.375,1.96875,zoom,C3,schedule a Zoom meeting
